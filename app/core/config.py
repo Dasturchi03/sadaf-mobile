@@ -100,8 +100,8 @@ class Settings(BaseSettings):
     MINIO_SECRET_KEY: str
     MINIO_TAG: str = 'miniofile'
 
-    HTTP_PROXY: Optional[str] = None
-    HTTPS_PROXY: Optional[str] = None
+    HTTP_PROXY = None
+    HTTPS_PROXY = None
     CRM_MEDIA_ROOT: Optional[str] = None
     CRM_MEDIA_BASE_URL: Optional[str] = None
 
