@@ -1,0 +1,18 @@
+services:
+
+  sadaf_mobile_api:
+    build: .
+    container_name: sadaf_mobile_api
+    restart: always
+    ports:
+      - "8999:8000"
+    env_file:
+      - .env
+    networks:
+      - sadaf_mobile_network
+    volumes:
+      - ./:/app
+
+networks:
+  sadaf_mobile_network:
+    external: true

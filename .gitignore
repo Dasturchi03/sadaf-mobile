@@ -1,0 +1,84 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.env
+.venv/
+env/
+venv/
+ENV/
+
+# Alembic
+alembic.ini
+alembic/
+
+# Distribution / packaging
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test / coverage reports
+.coverage
+.tox/
+.nox/
+.pytest_cache/
+htmlcov/
+coverage.xml
+*.cover
+
+# ---- FastAPI / App ----
+# SQLite DB (agar ishlatilsa)
+*.db
+*.sqlite3
+
+# Local configs / secrets
+*.env.local
+*.env.dev
+*.env.prod
+*.env.docker
+secrets.json
+
+# Logs
+*.log
+logs/
+*.pid
+
+# ---- VSCode / IDE ----
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ---- Docker ----
+# Docker build cache va compose files (lekin ba’zi joylarda saqlash kerak bo‘lishi mumkin)
+**/__pycache__/
+docker-compose.override.yml
+.docker/
+.dockerignore
+
+# ---- OS specific ----
+.DS_Store
+Thumbs.db
+
+# ---- Mypy / Ruff / Linters ----
+.mypy_cache/
+.dmypy.json
+.pyre/
+.ruff_cache/
