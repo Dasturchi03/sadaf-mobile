@@ -9,9 +9,7 @@ from app.utils.i18n import DEFAULT_LANGUAGE, SUPPORTED_LANGUAGES, reset_language
 class LanguageContextMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         path_language = request.url.path.strip("/").split("/", 1)[0]
-        language = path_language if path_language in SUPPORTED_LANGUAGES else None
-        if language is None:
-            language = request.headers.get("Accept-Language") or DEFAULT_LANGUAGE
+        language = path_language if path_language in SUPPORTED_LANGUAGES else DEFAULT_LANGUAGE
 
         token = set_language(language)
         try:
@@ -19,5 +17,5 @@ class LanguageContextMiddleware(BaseHTTPMiddleware):
         finally:
             reset_language(token)
 
-        response.headers["Content-Language"] = language if language in SUPPORTED_LANGUAGES else DEFAULT_LANGUAGE
+        response.headers["Content-Language"] = language
         return response

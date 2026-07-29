@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+import logging
+import re
 import secrets
 import uuid
-import logging
 from datetime import datetime, timedelta, timezone
 from typing import Any
 from urllib.parse import urljoin
@@ -75,6 +76,20 @@ def _send_url() -> str:
     if url.rstrip("/").endswith("/send"):
         return url
     return urljoin(url.rstrip("/") + "/", "send")
+
+
+def normalize_playmobile_recipient(phone_number: str) -> str:
+    digits = re.sub(r"\D", "", phone_number)
+    if len(digits) == 9:
+        digits = f"998{digits}"
+    if len(digits) == 13 and digits.startswith("9980"):
+        digits = f"998{digits[4:]}"
+    if len(digits) != 12 or not digits.startswith("998"):
+        raise HTTPException(
+            status_code=400,
+            detail={"phone_number": "Phone number must be in 998XXXXXXXXX format"},
+        )
+    return digits
 
 
 def build_otp_message(code: str, purpose: str, language: str | None = None) -> str:
@@ -150,6 +165,7 @@ async def send_sms(phone_number: str, message: str) -> dict[str, Any]:
         )
 
     message_id = _build_message_id()
+    recipient = normalize_playmobile_recipient(phone_number)
     payload = {
         "sms": {
             "originator": settings.SMS_PROVIDER_SENDER,
@@ -158,7 +174,7 @@ async def send_sms(phone_number: str, message: str) -> dict[str, Any]:
         },
         "messages": [
             {
-                "recipient": phone_number.lstrip("+"),
+                "recipient": recipient,
                 "message-id": message_id,
             }
         ],
@@ -185,13 +201,14 @@ async def send_sms(phone_number: str, message: str) -> dict[str, Any]:
     logger.info(
         "Playmobile SMS response message_id=%s recipient=%s status_code=%s body=%s",
         message_id,
-        phone_number,
+        recipient,
         response.status_code,
         provider_response,
     )
 
     return {
         "message_id": message_id,
+        "recipient": recipient,
         "provider_status_code": response.status_code,
         "provider_response": provider_response,
     }
