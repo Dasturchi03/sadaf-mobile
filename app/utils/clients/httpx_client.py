@@ -1,15 +1,20 @@
 import httpx
 from httpx import Limits, AsyncHTTPTransport, Timeout
+
 from app.core.config import settings
 
 
-proxy = {
-    "http://" : AsyncHTTPTransport(proxy=settings.HTTP_PROXY),
-    "https://": AsyncHTTPTransport(proxy=settings.HTTPS_PROXY)
-}
-
 _client: httpx.AsyncClient | None = None
 _proxy_client: httpx.AsyncClient | None = None
+
+
+def _proxy_mounts() -> dict[str, AsyncHTTPTransport]:
+    mounts: dict[str, AsyncHTTPTransport] = {}
+    if settings.HTTP_PROXY:
+        mounts["http://"] = AsyncHTTPTransport(proxy=settings.HTTP_PROXY)
+    if settings.HTTPS_PROXY:
+        mounts["https://"] = AsyncHTTPTransport(proxy=settings.HTTPS_PROXY)
+    return mounts
 
 
 def get_client() -> httpx.AsyncClient:
@@ -29,10 +34,11 @@ def get_proxy_client() -> httpx.AsyncClient:
     global _proxy_client
     if _proxy_client is None:
         _proxy_client = httpx.AsyncClient(
-            mounts=proxy,
+            mounts=_proxy_mounts(),
             timeout=Timeout(connect=5.0, read=30.0, write=30.0, pool=5.0),
             limits=Limits(max_connections=100, max_keepalive_connections=20),
             follow_redirects=True,
+            trust_env=False,
         )
 
     return _proxy_client

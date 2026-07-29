@@ -100,8 +100,8 @@ class Settings(BaseSettings):
     MINIO_SECRET_KEY: str
     MINIO_TAG: str = 'miniofile'
 
-    HTTP_PROXY = None
-    HTTPS_PROXY = None
+    HTTP_PROXY: Optional[str] = None
+    HTTPS_PROXY: Optional[str] = None
     CRM_MEDIA_ROOT: Optional[str] = None
     CRM_MEDIA_BASE_URL: Optional[str] = None
 
@@ -116,6 +116,16 @@ class Settings(BaseSettings):
             normalized = value.strip().lower()
             if normalized in {"release", "prod", "production"}:
                 return False
+        return value
+
+    @field_validator("HTTP_PROXY", "HTTPS_PROXY", mode="before")
+    @classmethod
+    def normalize_proxy(cls, value):
+        if value is None:
+            return None
+        if isinstance(value, str):
+            normalized = value.strip()
+            return normalized or None
         return value
 
     def model_post_init(self, __context):
