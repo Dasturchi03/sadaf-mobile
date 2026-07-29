@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import secrets
 import uuid
+import logging
 from datetime import datetime, timedelta, timezone
 from typing import Any
 from urllib.parse import urljoin
@@ -14,6 +15,8 @@ from app.core.config import settings
 from app.utils.clients import httpx_client, redis_client
 from app.utils.i18n import DEFAULT_LANGUAGE, get_language, normalize_language
 
+
+logger = logging.getLogger(__name__)
 
 OTP_PURPOSE_LOGIN = "login"
 OTP_PURPOSE_REGISTER = "register"
@@ -178,10 +181,19 @@ async def send_sms(phone_number: str, message: str) -> dict[str, Any]:
     except httpx.HTTPError as exc:
         raise HTTPException(status_code=502, detail="Playmobile request failed") from exc
 
+    provider_response = response.text.strip()
+    logger.info(
+        "Playmobile SMS response message_id=%s recipient=%s status_code=%s body=%s",
+        message_id,
+        phone_number,
+        response.status_code,
+        provider_response,
+    )
+
     return {
         "message_id": message_id,
         "provider_status_code": response.status_code,
-        "provider_response": response.text,
+        "provider_response": provider_response,
     }
 
 
