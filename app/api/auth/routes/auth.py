@@ -13,11 +13,17 @@ router_auth_v1 = APIRouter(prefix = "/v1", tags=["Auth v1"])
 login_router = APIRouter(prefix="/users", tags=["Users login"])
 router = APIRouter()
 UserLoginBody = Annotated[sc.UserLoginRequest, Depends(body_or_form(sc.UserLoginRequest))]
+TokenRefreshBody = Annotated[sc.TokenRefreshRequest, Depends(body_or_form(sc.TokenRefreshRequest))]
 
 
 @login_router.post('/login/', openapi_extra=body_or_form_openapi(sc.UserLoginRequest))
 async def login_user(request: UserLoginBody):
     return await sv.login_user(request=request)
+
+
+@login_router.post('/token/refresh', openapi_extra=body_or_form_openapi(sc.TokenRefreshRequest))
+async def refresh_token(request: TokenRefreshBody):
+    return await sv.refresh_token(request=request)
 
 
 @router_auth_v1.post('/api/auth/general')

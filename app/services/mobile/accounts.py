@@ -668,7 +668,7 @@ async def otp_verify(request: sc.MobileOTPVerify, *, purpose_hint: str | None = 
     )
     user = await _get_user_by_id(user["id"])
     access = auth_handler.encode_token(user)
-    refresh, _ = auth_handler.encode_refresh_token(user["id"])
+    refresh, _ = await auth_handler.issue_refresh_token(user["id"])
     return {
         "refresh": refresh,
         "access": access,
