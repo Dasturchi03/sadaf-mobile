@@ -207,6 +207,27 @@ async def _get_user_by_id(user_id: int) -> dict[str, Any]:
     return row
 
 
+def _is_active_verified_user(user: dict[str, Any] | None) -> bool:
+    return bool(user and user.get("is_active") and user.get("is_verified"))
+
+
+async def _resolve_login_user(phone_number: str, user: dict[str, Any] | None) -> dict[str, Any]:
+    if _is_active_verified_user(user):
+        return user
+
+    crm = await _get_crm_client_by_phone(phone_number)
+    if crm:
+        return await _upsert_user_from_crm(phone_number, crm)
+
+    if user:
+        return user
+
+    raise HTTPException(
+        status_code=400,
+        detail={"phone_number": "Client with this phone number was not found"},
+    )
+
+
 async def _upsert_user_from_crm(phone_number: str, crm: dict[str, Any]) -> dict[str, Any]:
     username = crm.get("username") or phone_number
     stmt = pg_insert(users_t).values(
@@ -536,14 +557,7 @@ async def _store_otp(
 async def otp_request(request: sc.MobileOTPRequest) -> dict[str, Any]:
     phone = _normalize_phone(request.phone_number)
     user = await _get_user_by_phone(phone)
-    if not user:
-        crm = await _get_crm_client_by_phone(phone)
-        if not crm:
-            raise HTTPException(
-                status_code=400,
-                detail={"phone_number": "Client with this phone number was not found"},
-            )
-        user = await _upsert_user_from_crm(phone, crm)
+    await _resolve_login_user(phone, user)
     code, expires_at, language, sms_result = await sms.prepare_and_send_otp(phone, sms.OTP_PURPOSE_LOGIN)
     expires_at = await _store_otp(phone, "login", code, expires_at, language, sms_result)
     return {
@@ -609,12 +623,9 @@ async def otp_register_request(request: sc.MobileOTPRegisterRequest) -> dict[str
 async def otp_verify(request: sc.MobileOTPVerify, *, purpose_hint: str | None = None):
     phone = _normalize_phone(request.phone_number)
     user = await _get_user_by_phone(phone)
-    crm = None
     purpose = purpose_hint or "login"
-    if purpose == "login" and not user:
-        crm = await _get_crm_client_by_phone(phone)
-        if crm:
-            user = await _upsert_user_from_crm(phone, crm)
+    if purpose == "login":
+        user = await _resolve_login_user(phone, user)
     if not user:
         raise HTTPException(status_code=400, detail={"phone_number": "OTP code was not requested"})
 
@@ -636,7 +647,7 @@ async def otp_verify(request: sc.MobileOTPVerify, *, purpose_hint: str | None = 
         raise HTTPException(status_code=400, detail={"otp_code": "OTP attempts limit exceeded"})
 
     valid_test_code = settings.MOBILE_OTP_USE_TEST_CODE and request.otp_code == settings.MOBILE_OTP_TEST_CODE
-    valid_hash = auth_handler.verify_password(request.otp_code, code_row["code_hash"])
+    valid_hash = False if valid_test_code else auth_handler.verify_password(request.otp_code, code_row["code_hash"])
     if not (valid_test_code or valid_hash):
         await db.orm_execute(
             update(otp_t)
@@ -645,16 +656,12 @@ async def otp_verify(request: sc.MobileOTPVerify, *, purpose_hint: str | None = 
         )
         raise HTTPException(status_code=400, detail={"otp_code": "Invalid OTP code"})
 
-    if purpose == "register":
+    if purpose == "register" or not user.get("is_active") or not user.get("is_verified"):
         await db.orm_execute(
             update(users_t)
             .where(users_t.c.id == user["id"])
             .values(is_active=True, is_verified=True, updated_at=func.now())
         )
-    elif not user.get("crm_client_id"):
-        crm = crm or await _get_crm_client_by_phone(phone)
-        if crm:
-            user = await _upsert_user_from_crm(phone, crm)
 
     await db.orm_execute(
         update(otp_t)

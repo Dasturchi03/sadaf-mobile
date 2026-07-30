@@ -9,6 +9,7 @@ from typing import Any
 import jwt
 from fastapi import HTTPException, Security
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from passlib.exc import UnknownHashError
 from passlib.context import CryptContext
 from sqlalchemy import func, insert, select, update
 
@@ -37,7 +38,10 @@ class AuthHandler:
     def verify_password(cls, plain_password: str, hashed_password: str | None) -> bool:
         if not hashed_password:
             return False
-        return cls.pwd_context.verify(plain_password, hashed_password)
+        try:
+            return cls.pwd_context.verify(plain_password, hashed_password)
+        except UnknownHashError:
+            return False
 
     def encode_token(self, user: dict[str, Any]) -> str:
         now = datetime.now(timezone.utc)
