@@ -30,6 +30,10 @@ MobileNotificationDeviceBody = Annotated[
     sc.MobileNotificationDeviceRequest,
     Depends(body_or_form(sc.MobileNotificationDeviceRequest)),
 ]
+MobileNotificationTestSendBody = Annotated[
+    sc.MobileNotificationTestSendRequest,
+    Depends(body_or_form(sc.MobileNotificationTestSendRequest)),
+]
 PartnerInquiryBody = Annotated[sc.PartnerInquiryRequest, Depends(body_or_form(sc.PartnerInquiryRequest))]
 ReservationRequestBody = Annotated[
     sc.MobileReservationRequestCreate,
@@ -218,6 +222,17 @@ async def mobile_notifications_device_register(
     auth_user: Auth,
 ):
     return await notifications.register_device(auth_user, request)
+
+
+@router.post(
+    "/mobile/notifications/test/send",
+    openapi_extra=body_or_form_openapi(sc.MobileNotificationTestSendRequest),
+)
+async def mobile_notifications_test_send(
+    request: MobileNotificationTestSendBody,
+    auth_user: Auth,
+):
+    return await notifications.test_send_notification(auth_user, request)
 
 
 @router.post(

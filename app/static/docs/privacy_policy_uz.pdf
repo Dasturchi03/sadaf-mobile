@@ -3,42 +3,269 @@
 << /Type /Catalog /Pages 2 0 R >>
 endobj
 2 0 obj
-<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+<< /Type /Pages /Kids [4 0 R 6 0 R] /Count 2 >>
 endobj
 3 0 obj
-<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>
-endobj
-4 0 obj
 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
 endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
 5 0 obj
-<< /Length 265 >>
+<< /Length 4277 >>
 stream
 BT
-/F1 20 Tf
-72 760 Td
-(Sadaf Mobile Privacy - UZ) Tj
-0 -36 Td
-/F1 11 Tf
-(Sadaf Dental mobil ilovasi uchun test maxfiylik siyosati.) Tj
-0 -18 Td
-(Bu fayl lokal tekshiruv uchun.) Tj
-0 -18 Td
-(Productionda rasmiy maxfiylik siyosati PDF faylini ulang.) Tj
-0 -18 Td
+/F1 18 Tf
+56 780 Td
+(Sadaf Dental Mobile App Privacy Policy) Tj
+-56 -26 Td
+0 -13 Td
+/F1 12 Tf
+56 741 Td
+(Document Status) Tj
+-56 -18 Td
+/F1 9 Tf
+56 723 Td
+(This Privacy Policy is a clinic approval draft for the Sadaf Dental mobile application. It) Tj
+-56 -13 Td
+/F1 9 Tf
+56 710 Td
+(  should be reviewed by the clinic management team and legal counsel before publication to) Tj
+-56 -13 Td
+/F1 9 Tf
+56 697 Td
+(  patients.) Tj
+-56 -13 Td
+0 -13 Td
+/F1 12 Tf
+56 671 Td
+(1. Data We Collect) Tj
+-56 -18 Td
+/F1 9 Tf
+56 653 Td
+(The app may collect and process phone number, name, birth date, gender, citizenship,) Tj
+-56 -13 Td
+/F1 9 Tf
+56 640 Td
+(  address, Telegram username, device token, language preference, OTP verification events,) Tj
+-56 -13 Td
+/F1 9 Tf
+56 627 Td
+(  appointment requests, reservation status, treatment card summaries, payment and cashback) Tj
+-56 -13 Td
+/F1 9 Tf
+56 614 Td
+(  information, referral activity, and support or vacancy application data.) Tj
+-56 -13 Td
+/F1 9 Tf
+56 601 Td
+(Some information is stored in the dedicated mobile backend database. Some patient,) Tj
+-56 -13 Td
+/F1 9 Tf
+56 588 Td
+(  treatment, reservation, and clinic content information is read from the clinic CRM database.) Tj
+-56 -13 Td
+0 -13 Td
+/F1 12 Tf
+56 562 Td
+(2. Why We Use Data) Tj
+-56 -18 Td
+/F1 9 Tf
+56 544 Td
+(- To verify users by SMS OTP and protect account access.) Tj
+-56 -13 Td
+/F1 9 Tf
+56 531 Td
+(- To show patient profile, loyalty, cashback, appointment, and treatment information.) Tj
+-56 -13 Td
+/F1 9 Tf
+56 518 Td
+(- To process appointment requests and clinic communications.) Tj
+-56 -13 Td
+/F1 9 Tf
+56 505 Td
+(- To send service notifications, reminders, and security messages.) Tj
+-56 -13 Td
+/F1 9 Tf
+56 492 Td
+(- To improve clinic operations, reliability, and patient support.) Tj
+-56 -13 Td
+0 -13 Td
+/F1 12 Tf
+56 466 Td
+(3. Health and Dental Information) Tj
+-56 -18 Td
+/F1 9 Tf
+56 448 Td
+(Treatment plans, procedure stages, doctor notes, reservation information, and payment status) Tj
+-56 -13 Td
+/F1 9 Tf
+56 435 Td
+(  may be sensitive patient information. The clinic uses this data only for dental care,) Tj
+-56 -13 Td
+/F1 9 Tf
+56 422 Td
+(  administration, accounting, communication, and legally required record keeping.) Tj
+-56 -13 Td
+0 -13 Td
+/F1 12 Tf
+56 396 Td
+(4. SMS and Push Notifications) Tj
+-56 -18 Td
+/F1 9 Tf
+56 378 Td
+(SMS verification codes are sent through the configured SMS provider. Push notifications may) Tj
+-56 -13 Td
+/F1 9 Tf
+56 365 Td
+(  be delivered through Firebase Cloud Messaging using device tokens registered by the app.) Tj
+-56 -13 Td
+/F1 9 Tf
+56 352 Td
+(Device tokens do not contain the patient medical record by themselves, but they are linked) Tj
+-56 -13 Td
+/F1 9 Tf
+56 339 Td
+(  to the mobile account so that notifications can be delivered.) Tj
+-56 -13 Td
+0 -13 Td
+/F1 12 Tf
+56 313 Td
+(5. Data Sharing) Tj
+-56 -18 Td
+/F1 9 Tf
+56 295 Td
+(Data may be shared with service providers that help operate the app, including hosting,) Tj
+-56 -13 Td
+/F1 9 Tf
+56 282 Td
+(  database, SMS delivery, push notification, file storage, analytics, and technical support) Tj
+-56 -13 Td
+/F1 9 Tf
+56 269 Td
+(  providers.) Tj
+-56 -13 Td
+/F1 9 Tf
+56 256 Td
+(The clinic does not sell patient data. Disclosure may occur when required by law, patient) Tj
+-56 -13 Td
+/F1 9 Tf
+56 243 Td
+(  request, payment dispute, clinic audit, or safety obligation.) Tj
+-56 -13 Td
+0 -13 Td
+/F1 12 Tf
+56 217 Td
+(6. Security) Tj
+-56 -18 Td
+/F1 9 Tf
+56 199 Td
+(The app uses OTP verification, access tokens, refresh tokens, database access controls, and) Tj
+-56 -13 Td
+/F1 9 Tf
+56 186 Td
+(  operational logging. No digital system is completely risk-free, so patients should protect) Tj
+-56 -13 Td
+/F1 9 Tf
+56 173 Td
+(  their phones and not share SMS codes.) Tj
+-56 -13 Td
+0 -13 Td
+/F1 12 Tf
+56 147 Td
+(7. Retention) Tj
+-56 -18 Td
+/F1 9 Tf
+56 129 Td
+(Clinic patient records may be kept for the period required by medical, tax, accounting, and) Tj
+-56 -13 Td
+/F1 9 Tf
+56 116 Td
+(  legal obligations. Mobile-only operational records may be kept as long as needed for) Tj
+-56 -13 Td
+/F1 9 Tf
+56 103 Td
+(  service, security, troubleshooting, or audit purposes.) Tj
+-56 -13 Td
+0 -13 Td
+/F1 12 Tf
+56 77 Td
+(8. Patient Choices) Tj
+-56 -18 Td
+/F1 8 Tf
+485 32 Td
+(Page 1 of 2) Tj
+ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 7 0 R >>
+endobj
+7 0 obj
+<< /Length 981 >>
+stream
+BT
+/F1 9 Tf
+56 780 Td
+(Patients may ask the clinic to review or correct profile information. Some medical and) Tj
+-56 -13 Td
+/F1 9 Tf
+56 767 Td
+(  accounting records cannot be deleted immediately if the clinic is legally required to retain) Tj
+-56 -13 Td
+/F1 9 Tf
+56 754 Td
+(  them.) Tj
+-56 -13 Td
+0 -13 Td
+/F1 12 Tf
+56 728 Td
+(9. Children and Guardians) Tj
+-56 -18 Td
+/F1 9 Tf
+56 710 Td
+(For minors, parents or legal guardians should manage app use and clinic communication.) Tj
+-56 -13 Td
+/F1 9 Tf
+56 697 Td
+(  Dental treatment for minors may require guardian approval according to clinic policy and) Tj
+-56 -13 Td
+/F1 9 Tf
+56 684 Td
+(  applicable law.) Tj
+-56 -13 Td
+0 -13 Td
+/F1 12 Tf
+56 658 Td
+(10. Contact) Tj
+-56 -18 Td
+/F1 9 Tf
+56 640 Td
+(Privacy questions should be sent to Sadaf Dental using the phone number, address, or social) Tj
+-56 -13 Td
+/F1 9 Tf
+56 627 Td
+(  contact details shown in the application.) Tj
+-56 -13 Td
+0 -13 Td
+/F1 8 Tf
+485 32 Td
+(Page 2 of 2) Tj
 ET
 endstream
 endobj
 xref
-0 6
+0 8
 0000000000 65535 f 
 0000000009 00000 n 
 0000000058 00000 n 
-0000000115 00000 n 
-0000000241 00000 n 
-0000000311 00000 n 
+0000000121 00000 n 
+0000000191 00000 n 
+0000000317 00000 n 
+0000004645 00000 n 
+0000004771 00000 n 
 trailer
-<< /Size 6 /Root 1 0 R >>
+<< /Size 8 /Root 1 0 R >>
 startxref
-626
+5802
 %%EOF

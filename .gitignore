@@ -82,3 +82,4 @@ Thumbs.db
 .dmypy.json
 .pyre/
 .ruff_cache/
+app/config/*

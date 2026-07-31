@@ -59,6 +59,11 @@ class MobileNotificationDeviceRequest(BaseModel):
     device_uid: str | None = None
 
 
+class MobileNotificationTestSendRequest(BaseModel):
+    username: str
+    message: str
+
+
 class PartnerInquiryRequest(BaseModel):
     full_name: str
     phone: str

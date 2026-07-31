@@ -35,12 +35,22 @@ TERMS_PDF_FILES = {
     "terms_and_conditions": {
         "uz": "terms_and_conditions_uz.pdf",
         "ru": "terms_and_conditions_ru.pdf",
-        "en": "terms_and_conditions_uz.pdf",
-    },
+        "en": "terms_and_conditions_en.pdf",
+    },  
     "privacy_policy": {
         "uz": "privacy_policy_uz.pdf",
         "ru": "privacy_policy_ru.pdf",
-        "en": "privacy_policy_uz.pdf",
+        "en": "privacy_policy_en.pdf",
+    },
+    "about_app": {
+        "uz": "about_app_en.pdf",
+        "ru": "about_app_en.pdf",
+        "en": "about_app_en.pdf",
+    },
+    "reservation_notes": {
+        "uz": "reservation_notes_en.pdf",
+        "ru": "reservation_notes_en.pdf",
+        "en": "reservation_notes_en.pdf",
     },
 }
 

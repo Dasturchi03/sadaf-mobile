@@ -3,42 +3,285 @@
 << /Type /Catalog /Pages 2 0 R >>
 endobj
 2 0 obj
-<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+<< /Type /Pages /Kids [4 0 R 6 0 R] /Count 2 >>
 endobj
 3 0 obj
-<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>
-endobj
-4 0 obj
 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
 endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
 5 0 obj
-<< /Length 314 >>
+<< /Length 4400 >>
 stream
 BT
-/F1 20 Tf
-72 760 Td
-(Sadaf Dental Mobile Contract) Tj
-0 -36 Td
-/F1 11 Tf
-(Generated local mock contract for mobile API testing.) Tj
-0 -18 Td
-(Replace this file or configure CRM_MEDIA_ROOT in production.) Tj
-0 -18 Td
-(Clinic: Sadaf Dental. Patient mobile flow: reservation and treatment history.) Tj
-0 -18 Td
+/F1 18 Tf
+56 780 Td
+(Patient Mobile App Service Agreement and Dental Treatment Consent) Tj
+-56 -26 Td
+0 -13 Td
+/F1 12 Tf
+56 741 Td
+(Document Status) Tj
+-56 -18 Td
+/F1 9 Tf
+56 723 Td
+(This Patient Mobile App Service Agreement and Dental Treatment Consent is a clinic approval) Tj
+-56 -13 Td
+/F1 9 Tf
+56 710 Td
+(  draft. It is intended for use as a digital reference document and should be reviewed before) Tj
+-56 -13 Td
+/F1 9 Tf
+56 697 Td
+(  official publication.) Tj
+-56 -13 Td
+0 -13 Td
+/F1 12 Tf
+56 671 Td
+(1. Parties) Tj
+-56 -18 Td
+/F1 9 Tf
+56 653 Td
+(This agreement is between the patient using the Sadaf Dental mobile application and Sadaf) Tj
+-56 -13 Td
+/F1 9 Tf
+56 640 Td
+(  Dental clinic. If the patient is a minor, the agreement applies to the parent or legal) Tj
+-56 -13 Td
+/F1 9 Tf
+56 627 Td
+(  guardian acting for the patient.) Tj
+-56 -13 Td
+0 -13 Td
+/F1 12 Tf
+56 601 Td
+(2. Purpose of the Mobile Agreement) Tj
+-56 -18 Td
+/F1 9 Tf
+56 583 Td
+(The mobile application supports appointment management, communication, patient profile) Tj
+-56 -13 Td
+/F1 9 Tf
+56 570 Td
+(  review, treatment history review, reservation reminders, loyalty information, and access to) Tj
+-56 -13 Td
+/F1 9 Tf
+56 557 Td
+(  clinic documents.) Tj
+-56 -13 Td
+/F1 9 Tf
+56 544 Td
+(A mobile reservation or status message does not replace a signed paper or electronic) Tj
+-56 -13 Td
+/F1 9 Tf
+56 531 Td
+(  clinical consent where the clinic requires a separate consent form.) Tj
+-56 -13 Td
+0 -13 Td
+/F1 12 Tf
+56 505 Td
+(3. Dental Treatment Consent Principles) Tj
+-56 -18 Td
+/F1 9 Tf
+56 487 Td
+(Before treatment, the dentist may explain diagnosis, proposed procedures, alternatives,) Tj
+-56 -13 Td
+/F1 9 Tf
+56 474 Td
+(  expected benefits, limitations, likely cost, and material risks. Common dental risks can) Tj
+-56 -13 Td
+/F1 9 Tf
+56 461 Td
+(  include pain, swelling, bleeding, sensitivity, infection, allergic reaction, temporary or) Tj
+-56 -13 Td
+/F1 9 Tf
+56 448 Td
+(  permanent numbness, restoration failure, need for additional procedures, or change of) Tj
+-56 -13 Td
+/F1 9 Tf
+56 435 Td
+(  treatment plan after examination.) Tj
+-56 -13 Td
+/F1 9 Tf
+56 422 Td
+(The patient may ask questions before treatment and may refuse or postpone treatment, except) Tj
+-56 -13 Td
+/F1 9 Tf
+56 409 Td
+(  where urgent clinical decisions are required to protect health and safety.) Tj
+-56 -13 Td
+0 -13 Td
+/F1 12 Tf
+56 383 Td
+(4. Appointment and Cancellation Rules) Tj
+-56 -18 Td
+/F1 9 Tf
+56 365 Td
+(Patients should keep scheduled appointments, arrive on time, and inform the clinic as early) Tj
+-56 -13 Td
+/F1 9 Tf
+56 352 Td
+(  as possible if they need to cancel or reschedule.) Tj
+-56 -13 Td
+/F1 9 Tf
+56 339 Td
+(The clinic may change the appointment time when a doctor is unavailable, equipment) Tj
+-56 -13 Td
+/F1 9 Tf
+56 326 Td
+(  maintenance is required, emergency patients need priority, or the selected service is not) Tj
+-56 -13 Td
+/F1 9 Tf
+56 313 Td
+(  appropriate for the appointment slot.) Tj
+-56 -13 Td
+0 -13 Td
+/F1 12 Tf
+56 287 Td
+(5. Payments and Balances) Tj
+-56 -18 Td
+/F1 9 Tf
+56 269 Td
+(Prices shown in the application are informational and may depend on examination results,) Tj
+-56 -13 Td
+/F1 9 Tf
+56 256 Td
+(  selected materials, treatment complexity, discounts, and clinic accounting records.) Tj
+-56 -13 Td
+/F1 9 Tf
+56 243 Td
+(The patient is responsible for paying approved treatment fees. Refunds, discounts,) Tj
+-56 -13 Td
+/F1 9 Tf
+56 230 Td
+(  installment plans, and cashback use are handled under clinic policy.) Tj
+-56 -13 Td
+0 -13 Td
+/F1 12 Tf
+56 204 Td
+(6. Patient Declarations) Tj
+-56 -18 Td
+/F1 9 Tf
+56 186 Td
+(- I will provide accurate personal, contact, and health information.) Tj
+-56 -13 Td
+/F1 9 Tf
+56 173 Td
+(- I will inform the clinic about allergies, pregnancy, chronic conditions, medicines,) Tj
+-56 -13 Td
+/F1 9 Tf
+56 160 Td
+(  previous complications, and relevant medical history.) Tj
+-56 -13 Td
+/F1 9 Tf
+56 147 Td
+(- I understand that dental results can vary and no result is guaranteed unless expressly) Tj
+-56 -13 Td
+/F1 9 Tf
+56 134 Td
+(  confirmed by the clinic in writing.) Tj
+-56 -13 Td
+/F1 9 Tf
+56 121 Td
+(- I understand that emergency symptoms require immediate phone contact or emergency care,) Tj
+-56 -13 Td
+/F1 9 Tf
+56 108 Td
+(  not only app messaging.) Tj
+-56 -13 Td
+0 -13 Td
+/F1 12 Tf
+56 82 Td
+(7. Digital Communication Consent) Tj
+-56 -18 Td
+/F1 8 Tf
+485 32 Td
+(Page 1 of 2) Tj
+ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 7 0 R >>
+endobj
+7 0 obj
+<< /Length 1369 >>
+stream
+BT
+/F1 9 Tf
+56 780 Td
+(The patient agrees to receive operational messages by SMS, phone call, push notification, or) Tj
+-56 -13 Td
+/F1 9 Tf
+56 767 Td
+(  in-app notification for OTP verification, appointments, treatment status, reminders,) Tj
+-56 -13 Td
+/F1 9 Tf
+56 754 Td
+(  payments, and clinic service updates.) Tj
+-56 -13 Td
+0 -13 Td
+/F1 12 Tf
+56 728 Td
+(8. Records) Tj
+-56 -18 Td
+/F1 9 Tf
+56 710 Td
+(The clinic may maintain treatment records, X-ray references, treatment stages, reservation) Tj
+-56 -13 Td
+/F1 9 Tf
+56 697 Td
+(  history, payment records, and consent notes in the clinic CRM and related systems.) Tj
+-56 -13 Td
+0 -13 Td
+/F1 12 Tf
+56 671 Td
+(9. Governing Clinic Policy) Tj
+-56 -18 Td
+/F1 9 Tf
+56 653 Td
+(Where this mobile document conflicts with a signed clinic consent, invoice, treatment plan,) Tj
+-56 -13 Td
+/F1 9 Tf
+56 640 Td
+(  or current clinic policy, the latest confirmed clinic document or policy controls.) Tj
+-56 -13 Td
+0 -13 Td
+/F1 12 Tf
+56 614 Td
+(10. Acknowledgement) Tj
+-56 -18 Td
+/F1 9 Tf
+56 596 Td
+(By continuing to use the mobile application and requesting services through it, the patient) Tj
+-56 -13 Td
+/F1 9 Tf
+56 583 Td
+(  acknowledges that they have read this document and will follow clinic instructions and) Tj
+-56 -13 Td
+/F1 9 Tf
+56 570 Td
+(  appointment rules.) Tj
+-56 -13 Td
+0 -13 Td
+/F1 8 Tf
+485 32 Td
+(Page 2 of 2) Tj
 ET
 endstream
 endobj
 xref
-0 6
+0 8
 0000000000 65535 f 
 0000000009 00000 n 
 0000000058 00000 n 
-0000000115 00000 n 
-0000000241 00000 n 
-0000000311 00000 n 
+0000000121 00000 n 
+0000000191 00000 n 
+0000000317 00000 n 
+0000004768 00000 n 
+0000004894 00000 n 
 trailer
-<< /Size 6 /Root 1 0 R >>
+<< /Size 8 /Root 1 0 R >>
 startxref
-675
+6314
 %%EOF

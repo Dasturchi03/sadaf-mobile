@@ -9,6 +9,8 @@ from sqlalchemy import func, select, update
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 
 from app.api.mobile import schemas as sc
+from app.api.auth.models.users import Users
+from app.core.config import settings
 from app.models.mobile import Notification, NotificationDevice
 from app.services.common import db_common as db
 from app.services.mobile import push
@@ -18,6 +20,7 @@ from app.utils.i18n import localized
 
 notifications_t = Notification.__table__
 devices_t = NotificationDevice.__table__
+users_t = Users.__table__
 
 
 TYPE_LABELS = {
@@ -87,6 +90,7 @@ async def create_notification(
     crm_reservation_id: int | None = None,
     payload: dict[str, Any] | None = None,
     send_push: bool = True,
+    include_push_result: bool = False,
 ) -> dict[str, Any]:
     row = await db.orm_one(
         pg_insert(notifications_t)
@@ -104,16 +108,54 @@ async def create_notification(
         raise HTTPException(status_code=500, detail="Notification creation failed")
 
     serialized = _serialize(dict(row))
+    sent_count = 0
     if send_push:
         title = serialized["status_label"]
         body = serialized["notification_message"] or title
-        await push.send_push_to_user(
+        sent_count = await push.send_push_to_user(
             user_id=user_id,
             title=title,
             body=body,
             data=_push_payload(dict(row)),
         )
+    if include_push_result:
+        serialized["push_sent_count"] = sent_count
     return serialized
+
+
+async def test_send_notification(
+    auth_user: dict[str, Any],
+    request: sc.MobileNotificationTestSendRequest,
+) -> dict[str, Any]:
+    if not settings.DEBUG:
+        raise HTTPException(status_code=404, detail="Not found")
+
+    user = await db.orm_one(
+        select(users_t.c.id, users_t.c.username)
+        .where(
+            users_t.c.username == request.username,
+            users_t.c.is_active.is_(True),
+        )
+        .limit(1)
+    )
+    if not user:
+        raise HTTPException(status_code=404, detail="User was not found")
+
+    result = await create_notification(
+        user_id=user["id"],
+        notification_type="general",
+        message=request.message,
+        payload={
+            "source": "test_api",
+            "target_username": request.username,
+            "requested_by_user_id": auth_user["id"],
+            "requested_by_username": auth_user.get("username"),
+        },
+        include_push_result=True,
+    )
+    result["target_user_id"] = user["id"]
+    result["target_username"] = user["username"]
+    return result
 
 
 async def list_notifications(auth_user: dict[str, Any], *, page: int | None, page_size: int | None):

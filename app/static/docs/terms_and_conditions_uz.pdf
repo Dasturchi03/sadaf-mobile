@@ -3,42 +3,309 @@
 << /Type /Catalog /Pages 2 0 R >>
 endobj
 2 0 obj
-<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+<< /Type /Pages /Kids [4 0 R 6 0 R] /Count 2 >>
 endobj
 3 0 obj
-<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>
-endobj
-4 0 obj
 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
 endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
 5 0 obj
-<< /Length 282 >>
+<< /Length 4619 >>
 stream
 BT
-/F1 20 Tf
-72 760 Td
-(Sadaf Mobile Terms - UZ) Tj
-0 -36 Td
-/F1 11 Tf
-(Sadaf Dental mobil ilovasi uchun test shartlari.) Tj
-0 -18 Td
-(Bu hujjat lokal test maqsadida generatsiya qilingan.) Tj
-0 -18 Td
-(Production muhitida rasmiy tasdiqlangan PDF bilan almashtiring.) Tj
-0 -18 Td
+/F1 18 Tf
+56 780 Td
+(Sadaf Dental Mobile App Terms and Conditions) Tj
+-56 -26 Td
+0 -13 Td
+/F1 12 Tf
+56 741 Td
+(Document Status) Tj
+-56 -18 Td
+/F1 9 Tf
+56 723 Td
+(This document is a clinic approval draft for the Sadaf Dental mobile application. It should) Tj
+-56 -13 Td
+/F1 9 Tf
+56 710 Td
+(  be reviewed by the clinic management team and legal counsel before publication to patients.) Tj
+-56 -13 Td
+/F1 9 Tf
+56 697 Td
+(The terms describe use of the mobile application only. Dental diagnosis, treatment planning,) Tj
+-56 -13 Td
+/F1 9 Tf
+56 684 Td
+(  and clinical consent are governed by the patient record and signed clinic documents.) Tj
+-56 -13 Td
+0 -13 Td
+/F1 12 Tf
+56 658 Td
+(1. Mobile App Services) Tj
+-56 -18 Td
+/F1 9 Tf
+56 640 Td
+(The Sadaf Dental mobile application helps patients manage clinic interactions digitally,) Tj
+-56 -13 Td
+/F1 9 Tf
+56 627 Td
+(  including profile access, appointment requests, reservation confirmations, treatment) Tj
+-56 -13 Td
+/F1 9 Tf
+56 614 Td
+(  history, cashback and referral information, clinic news, vacancies, and notifications.) Tj
+-56 -13 Td
+/F1 9 Tf
+56 601 Td
+(The application is a convenience service. It does not replace an in-person dental) Tj
+-56 -13 Td
+/F1 9 Tf
+56 588 Td
+(  examination, emergency care, professional diagnosis, or direct communication with the clinic) Tj
+-56 -13 Td
+/F1 9 Tf
+56 575 Td
+(  team.) Tj
+-56 -13 Td
+0 -13 Td
+/F1 12 Tf
+56 549 Td
+(2. Account and Phone Verification) Tj
+-56 -18 Td
+/F1 9 Tf
+56 531 Td
+(Patients sign in or register using a phone number and a one-time SMS verification code. The) Tj
+-56 -13 Td
+/F1 9 Tf
+56 518 Td
+(  user is responsible for keeping the phone number active and for not sharing verification) Tj
+-56 -13 Td
+/F1 9 Tf
+56 505 Td
+(  codes with any other person.) Tj
+-56 -13 Td
+/F1 9 Tf
+56 492 Td
+(If the phone number already exists in the clinic CRM, the application may link the mobile) Tj
+-56 -13 Td
+/F1 9 Tf
+56 479 Td
+(  account to the matching clinic patient record after successful verification.) Tj
+-56 -13 Td
+0 -13 Td
+/F1 12 Tf
+56 453 Td
+(3. Appointment Requests and Reservations) Tj
+-56 -18 Td
+/F1 9 Tf
+56 435 Td
+(The app may allow patients to choose a doctor, service, date, and available time slot. A) Tj
+-56 -13 Td
+/F1 9 Tf
+56 422 Td
+(  submitted request is not a completed clinical service and may require confirmation by the) Tj
+-56 -13 Td
+/F1 9 Tf
+56 409 Td
+(  clinic.) Tj
+-56 -13 Td
+/F1 9 Tf
+56 396 Td
+(The clinic may approve, reschedule, or cancel a reservation when required by doctor) Tj
+-56 -13 Td
+/F1 9 Tf
+56 383 Td
+(  availability, clinical priority, operational changes, or incorrect patient data.) Tj
+-56 -13 Td
+/F1 9 Tf
+56 370 Td
+(Patients should arrive at least 10 minutes before the scheduled time. Late arrival may) Tj
+-56 -13 Td
+/F1 9 Tf
+56 357 Td
+(  shorten the appointment or require rescheduling.) Tj
+-56 -13 Td
+0 -13 Td
+/F1 12 Tf
+56 331 Td
+(4. Treatment Information) Tj
+-56 -18 Td
+/F1 9 Tf
+56 313 Td
+(Treatment plans, stages, prices, payments, outstanding balances, doctor names, and) Tj
+-56 -13 Td
+/F1 9 Tf
+56 300 Td
+(  reservation summaries shown in the application are based on clinic records and may be) Tj
+-56 -13 Td
+/F1 9 Tf
+56 287 Td
+(  updated after clinical review.) Tj
+-56 -13 Td
+/F1 9 Tf
+56 274 Td
+(If information in the app conflicts with a signed treatment plan, invoice, or direct) Tj
+-56 -13 Td
+/F1 9 Tf
+56 261 Td
+(  instruction from the clinic, the latest confirmed clinic record takes priority.) Tj
+-56 -13 Td
+0 -13 Td
+/F1 12 Tf
+56 235 Td
+(5. Payments, Cashback, and Referral Features) Tj
+-56 -18 Td
+/F1 9 Tf
+56 217 Td
+(Balances, cashback amounts, loyalty status, and referral bonuses are informational until) Tj
+-56 -13 Td
+/F1 9 Tf
+56 204 Td
+(  confirmed by the clinic accounting system.) Tj
+-56 -13 Td
+/F1 9 Tf
+56 191 Td
+(The clinic may correct balances, reverse mistaken bonuses, or reject abuse of promotional) Tj
+-56 -13 Td
+/F1 9 Tf
+56 178 Td
+(  features. Cashback terms may change with notice in the app or at the clinic.) Tj
+-56 -13 Td
+0 -13 Td
+/F1 12 Tf
+56 152 Td
+(6. Notifications and SMS) Tj
+-56 -18 Td
+/F1 9 Tf
+56 134 Td
+(The application may send SMS codes, push notifications, reservation reminders, status) Tj
+-56 -13 Td
+/F1 9 Tf
+56 121 Td
+(  updates, clinic announcements, and service messages.) Tj
+-56 -13 Td
+/F1 9 Tf
+56 108 Td
+(Delivery can depend on mobile operators, internet access, device settings, and Firebase or) Tj
+-56 -13 Td
+/F1 9 Tf
+56 95 Td
+(  SMS provider availability. Patients remain responsible for checking appointment status when) Tj
+-56 -13 Td
+/F1 9 Tf
+56 82 Td
+(  needed.) Tj
+-56 -13 Td
+0 -13 Td
+/F1 8 Tf
+485 32 Td
+(Page 1 of 2) Tj
+ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 7 0 R >>
+endobj
+7 0 obj
+<< /Length 1833 >>
+stream
+BT
+/F1 12 Tf
+56 780 Td
+(7. Medical Safety) Tj
+-56 -18 Td
+/F1 9 Tf
+56 762 Td
+(The application must not be used for dental emergencies, severe pain, uncontrolled bleeding,) Tj
+-56 -13 Td
+/F1 9 Tf
+56 749 Td
+(  trauma, swelling, allergic reaction, or any urgent medical condition. In urgent cases,) Tj
+-56 -13 Td
+/F1 9 Tf
+56 736 Td
+(  contact the clinic by phone or seek emergency care immediately.) Tj
+-56 -13 Td
+/F1 9 Tf
+56 723 Td
+(General articles and educational content are not personal medical advice. Individual) Tj
+-56 -13 Td
+/F1 9 Tf
+56 710 Td
+(  treatment decisions require examination by a qualified dental professional.) Tj
+-56 -13 Td
+0 -13 Td
+/F1 12 Tf
+56 684 Td
+(8. User Responsibilities) Tj
+-56 -18 Td
+/F1 9 Tf
+56 666 Td
+(- Provide accurate profile, contact, and health-related information.) Tj
+-56 -13 Td
+/F1 9 Tf
+56 653 Td
+(- Keep account access secure and immediately report unauthorized use.) Tj
+-56 -13 Td
+/F1 9 Tf
+56 640 Td
+(- Follow clinic instructions before and after procedures.) Tj
+-56 -13 Td
+/F1 9 Tf
+56 627 Td
+(- Respect clinic staff, doctors, and appointment rules.) Tj
+-56 -13 Td
+0 -13 Td
+/F1 12 Tf
+56 601 Td
+(9. Changes and Availability) Tj
+-56 -18 Td
+/F1 9 Tf
+56 583 Td
+(The clinic may update app functionality, suspend features for maintenance, or change these) Tj
+-56 -13 Td
+/F1 9 Tf
+56 570 Td
+(  terms when needed. Continued use after publication of updated terms means acceptance of the) Tj
+-56 -13 Td
+/F1 9 Tf
+56 557 Td
+(  updated terms.) Tj
+-56 -13 Td
+0 -13 Td
+/F1 12 Tf
+56 531 Td
+(10. Contact) Tj
+-56 -18 Td
+/F1 9 Tf
+56 513 Td
+(Questions about appointments, treatment records, payments, or these terms should be directed) Tj
+-56 -13 Td
+/F1 9 Tf
+56 500 Td
+(  to Sadaf Dental through the contact details shown in the mobile application.) Tj
+-56 -13 Td
+0 -13 Td
+/F1 8 Tf
+485 32 Td
+(Page 2 of 2) Tj
 ET
 endstream
 endobj
 xref
-0 6
+0 8
 0000000000 65535 f 
 0000000009 00000 n 
 0000000058 00000 n 
-0000000115 00000 n 
-0000000241 00000 n 
-0000000311 00000 n 
+0000000121 00000 n 
+0000000191 00000 n 
+0000000317 00000 n 
+0000004987 00000 n 
+0000005113 00000 n 
 trailer
-<< /Size 6 /Root 1 0 R >>
+<< /Size 8 /Root 1 0 R >>
 startxref
-643
+6997
 %%EOF
