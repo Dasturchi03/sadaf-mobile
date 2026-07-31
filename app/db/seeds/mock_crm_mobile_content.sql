@@ -2,8 +2,8 @@ BEGIN;
 
 DO $$
 BEGIN
-    IF current_database() <> 'sadaf_db' THEN
-        RAISE EXCEPTION 'Refusing to seed mock CRM data into database "%". Expected "sadaf_db".', current_database();
+    IF current_database() <> 'sadaf_test_db' THEN
+        RAISE EXCEPTION 'Refusing to seed mock CRM data into database "%". Expected "sadaf_test_db".', current_database();
     END IF;
 END
 $$;
