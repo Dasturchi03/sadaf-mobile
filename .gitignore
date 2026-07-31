@@ -85,3 +85,4 @@ Thumbs.db
 app/config/*
 
 app/uploads/
+app/uploads/*
