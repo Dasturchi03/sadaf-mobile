@@ -22,6 +22,7 @@ from app.models.mobile import (
     ReferralCode,
     ReservationRequest,
     Notification,
+    UserContact,
 )
 from app.services.common import db_common as db
 from app.services.mobile import sms
@@ -37,6 +38,7 @@ referral_applications_t = ReferralApplication.__table__
 cashback_entries_t = CashbackEntry.__table__
 reservation_requests_t = ReservationRequest.__table__
 notifications_t = Notification.__table__
+user_contacts_t = UserContact.__table__
 
 
 TIER_THRESHOLDS = {
@@ -196,6 +198,40 @@ async def _get_crm_client_by_id(client_id: int | None) -> dict[str, Any] | None:
 
 async def _get_user_by_phone(phone_number: str) -> dict[str, Any] | None:
     return await db.orm_one(select(users_t).where(users_t.c.phone_number == phone_number))
+
+
+async def _remember_user_contact(
+    *,
+    phone_number: str,
+    purpose: str,
+    user: dict[str, Any] | None = None,
+    crm_client_id: int | None = None,
+) -> None:
+    stmt = pg_insert(user_contacts_t).values(
+        user_id=(user or {}).get("id"),
+        phone_number=phone_number,
+        crm_client_id=crm_client_id or (user or {}).get("crm_client_id"),
+        source="otp",
+        last_otp_purpose=purpose,
+        last_seen_at=func.now(),
+    )
+    excluded = stmt.excluded
+    await db.orm_execute(
+        stmt.on_conflict_do_update(
+            index_elements=[user_contacts_t.c.phone_number],
+            set_={
+                "user_id": func.coalesce(excluded.user_id, user_contacts_t.c.user_id),
+                "crm_client_id": func.coalesce(
+                    excluded.crm_client_id,
+                    user_contacts_t.c.crm_client_id,
+                ),
+                "source": excluded.source,
+                "last_otp_purpose": excluded.last_otp_purpose,
+                "last_seen_at": func.now(),
+                "updated_at": func.now(),
+            },
+        )
+    )
 
 
 async def _get_user_by_id(user_id: int) -> dict[str, Any]:
@@ -557,7 +593,8 @@ async def _store_otp(
 async def otp_request(request: sc.MobileOTPRequest) -> dict[str, Any]:
     phone = _normalize_phone(request.phone_number)
     user = await _get_user_by_phone(phone)
-    await _resolve_login_user(phone, user)
+    user = await _resolve_login_user(phone, user)
+    await _remember_user_contact(phone_number=phone, purpose="login", user=user)
     code, expires_at, language, sms_result = await sms.prepare_and_send_otp(phone, sms.OTP_PURPOSE_LOGIN)
     expires_at = await _store_otp(phone, "login", code, expires_at, language, sms_result)
     return {
@@ -610,6 +647,7 @@ async def otp_register_request(request: sc.MobileOTPRegisterRequest) -> dict[str
             },
         ).returning(users_t)
     )
+    await _remember_user_contact(phone_number=phone, purpose="register", user=row)
     code, expires_at, language, sms_result = await sms.prepare_and_send_otp(phone, sms.OTP_PURPOSE_REGISTER)
     expires_at = await _store_otp(phone, "register", code, expires_at, language, sms_result)
     return {

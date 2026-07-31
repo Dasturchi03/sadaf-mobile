@@ -1,6 +1,7 @@
 import logging
 import inspect
 import textwrap
+from pathlib import Path
 from fastapi import FastAPI
 from fastapi.encoders import jsonable_encoder
 from fastapi.staticfiles import StaticFiles
@@ -21,9 +22,11 @@ from app.middlewares.language_middleware import LanguageContextMiddleware
 
 
 logger = logging.getLogger("uvicorn.error")
+APP_ROOT = Path(__file__).resolve().parents[1]
 app = FastAPI(title=settings.PROJECT_NAME, lifespan=lifespan, docs_url=None)
 app.openapi_version = "3.0.0"
 app.mount("/swager", StaticFiles(directory="app/utils/swagger"), name="swagger")
+app.mount("/static", StaticFiles(directory=APP_ROOT / "static"), name="static")
 app.add_middleware(LanguageContextMiddleware)
 app.add_middleware(CaptureBaseUrlOnceMiddleware)
 app.add_middleware(

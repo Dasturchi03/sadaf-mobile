@@ -104,6 +104,7 @@ class Settings(BaseSettings):
     HTTPS_PROXY: Optional[str] = None
     CRM_MEDIA_ROOT: Optional[str] = None
     CRM_MEDIA_BASE_URL: Optional[str] = None
+    FIREBASE_CREDENTIALS_FILE: Optional[str] = None
 
     DEBUG: bool = True
     

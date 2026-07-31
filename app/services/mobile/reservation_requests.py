@@ -10,6 +10,7 @@ from sqlalchemy import func, insert, select, text, update
 from app.api.mobile import schemas as sc
 from app.models.mobile import MobileEvent, ReservationRequest
 from app.services.common import db_common as db
+from app.services.mobile import notifications
 from app.services.mobile.common import lang_suffix, offset_limit, paginate_rows
 from app.services.mobile.reservations import doctor_detail, doctor_works
 from app.utils.i18n import localized
@@ -263,6 +264,26 @@ async def create_request(auth_user: dict[str, Any], request: sc.MobileReservatio
                 "time": request.time.strftime("%H:%M"),
             },
         )
+    )
+    await notifications.create_notification(
+        user_id=auth_user["id"],
+        notification_type="reservation_request",
+        message=localized(
+            {
+                "uz": "Qabul so'rovingiz qabul qilindi",
+                "ru": "Ваша заявка на запись принята",
+                "en": "Your reservation request was received",
+            },
+            "Your reservation request was received",
+        ),
+        crm_reservation_id=row.get("crm_reservation_id"),
+        payload={
+            "reservation_request_id": row["id"],
+            "doctor_name": doctor.get("full_name"),
+            "service_title": work.get("work_title"),
+            "date": request.date.isoformat(),
+            "time": request.time.strftime("%H:%M"),
+        },
     )
     return _serialize(
         dict(row),

@@ -30,6 +30,24 @@ COUNTRIES = [
     {"name": "Afghanistan", "code": "AF"},
 ]
 
+DOCS_ROOT = Path(__file__).resolve().parents[2] / "static" / "docs"
+TERMS_PDF_FILES = {
+    "terms_and_conditions": {
+        "uz": "terms_and_conditions_uz.pdf",
+        "ru": "terms_and_conditions_ru.pdf",
+        "en": "terms_and_conditions_uz.pdf",
+    },
+    "privacy_policy": {
+        "uz": "privacy_policy_uz.pdf",
+        "ru": "privacy_policy_ru.pdf",
+        "en": "privacy_policy_uz.pdf",
+    },
+}
+
+
+def _static_doc_url(filename: str) -> str:
+    return f"/static/docs/{filename}"
+
 
 async def country_list():
     return COUNTRIES
@@ -78,7 +96,11 @@ async def terms(text_type: str):
         row = None
     if not row:
         not_found("Active document was not found")
-    return as_dict(row)
+    data = as_dict(row)
+    filename = TERMS_PDF_FILES.get(text_type, {}).get(lang)
+    if filename and (DOCS_ROOT / filename).exists():
+        data["pdf_url"] = _static_doc_url(filename)
+    return data
 
 
 async def articles(
@@ -342,6 +364,13 @@ async def contract_download():
     except UndefinedTableError:
         row = None
     if not row or not row["file"]:
+        fallback = DOCS_ROOT / "sadaf_mobile_contract.pdf"
+        if fallback.exists():
+            return FileResponse(
+                fallback,
+                media_type="application/pdf",
+                filename=fallback.name,
+            )
         not_found("Active document was not found")
 
     file_name = row["file"]
@@ -357,6 +386,14 @@ async def contract_download():
     if settings.CRM_MEDIA_BASE_URL:
         return RedirectResponse(
             f"{settings.CRM_MEDIA_BASE_URL.rstrip('/')}/{file_name.lstrip('/')}"
+        )
+
+    fallback = DOCS_ROOT / "sadaf_mobile_contract.pdf"
+    if fallback.exists():
+        return FileResponse(
+            fallback,
+            media_type="application/pdf",
+            filename=fallback.name,
         )
 
     raise HTTPException(

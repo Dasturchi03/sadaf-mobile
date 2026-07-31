@@ -40,6 +40,24 @@ class OTPCode(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
 
 
+class UserContact(Base):
+    __tablename__ = "user_contacts"
+    __table_args__ = (
+        Index("user_contacts_phone_idx", "phone_number"),
+        Index("user_contacts_user_idx", "user_id"),
+    )
+
+    contact_id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    phone_number: Mapped[str] = mapped_column(String(32), nullable=False, unique=True)
+    crm_client_id: Mapped[int | None] = mapped_column(Integer)
+    source: Mapped[str] = mapped_column(String(32), nullable=False, default="otp")
+    last_otp_purpose: Mapped[str | None] = mapped_column(String(32))
+    last_seen_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+
+
 class RefreshToken(Base):
     __tablename__ = "refresh_tokens"
 

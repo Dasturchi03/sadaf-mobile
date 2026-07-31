@@ -11,6 +11,7 @@ from sqlalchemy.dialects.postgresql import insert as pg_insert
 from app.api.mobile import schemas as sc
 from app.models.mobile import Notification, NotificationDevice
 from app.services.common import db_common as db
+from app.services.mobile import push
 from app.services.mobile.common import offset_limit, paginate_rows
 from app.utils.i18n import localized
 
@@ -57,6 +58,62 @@ def _serialize(row: dict[str, Any]) -> dict[str, Any]:
         "payload": {key: _json_value(value) for key, value in payload.items()} if isinstance(payload, dict) else payload,
         "created_at": _json_value(row["created_at"]),
     }
+
+
+def _push_payload(row: dict[str, Any]) -> dict[str, Any]:
+    payload = row.get("payload") or {}
+    data = {
+        "notification_id": row["notification_id"],
+        "notification_type": row["notification_type"],
+        "next_action": "open_reservation" if row.get("crm_reservation_id") else "open_notifications",
+        "target_type": "reservation" if row.get("crm_reservation_id") else "notification",
+        "target_id": row.get("crm_reservation_id") or row["notification_id"],
+    }
+    if row.get("crm_reservation_id"):
+        data["reservation_id"] = row["crm_reservation_id"]
+    if isinstance(payload, dict):
+        for key, value in payload.items():
+            if key != "reservation":
+                data[key] = value
+    return data
+
+
+async def create_notification(
+    *,
+    user_id: int,
+    notification_type: str = "general",
+    message: str | None = None,
+    crm_notification_id: int | None = None,
+    crm_reservation_id: int | None = None,
+    payload: dict[str, Any] | None = None,
+    send_push: bool = True,
+) -> dict[str, Any]:
+    row = await db.orm_one(
+        pg_insert(notifications_t)
+        .values(
+            user_id=user_id,
+            crm_notification_id=crm_notification_id,
+            crm_reservation_id=crm_reservation_id,
+            notification_type=notification_type,
+            notification_message=message,
+            payload=payload or {},
+        )
+        .returning(notifications_t)
+    )
+    if not row:
+        raise HTTPException(status_code=500, detail="Notification creation failed")
+
+    serialized = _serialize(dict(row))
+    if send_push:
+        title = serialized["status_label"]
+        body = serialized["notification_message"] or title
+        await push.send_push_to_user(
+            user_id=user_id,
+            title=title,
+            body=body,
+            data=_push_payload(dict(row)),
+        )
+    return serialized
 
 
 async def list_notifications(auth_user: dict[str, Any], *, page: int | None, page_size: int | None):
