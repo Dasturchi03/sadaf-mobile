@@ -83,3 +83,5 @@ Thumbs.db
 .pyre/
 .ruff_cache/
 app/config/*
+
+app/uploads/
