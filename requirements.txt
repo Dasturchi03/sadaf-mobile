@@ -14,3 +14,4 @@ fastapi-pagination==0.12.34
 httpx==0.28.1
 redis==5.2.1
 minio==7.2.14
+firebase-admin==6.9.0
