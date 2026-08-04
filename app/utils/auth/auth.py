@@ -59,13 +59,13 @@ class AuthHandler:
         try:
             payload = jwt.decode(token, self.secret, algorithms=["HS256"])
         except jwt.ExpiredSignatureError:
-            raise HTTPException(status_code=403, detail={"status": "Signature has expired"})
+            raise HTTPException(status_code=401, detail={"status": "Signature has expired"})
         except jwt.InvalidTokenError:
             raise HTTPException(status_code=401, detail={"status": "Invalid token"})
 
         user_id = payload.get("user_id")
         if not user_id:
-            raise HTTPException(status_code=403, detail="Not authenticated!")
+            raise HTTPException(status_code=401, detail="Not authenticated!")
 
         user = await db.orm_one(
             select(
@@ -87,7 +87,7 @@ class AuthHandler:
             ).where(users_t.c.id == int(user_id), users_t.c.is_active.is_(True))
         )
         if user is None:
-            raise HTTPException(status_code=403, detail="Not authenticated!")
+            raise HTTPException(status_code=401, detail="Not authenticated!")
         return user
 
     async def auth_wrapper(
