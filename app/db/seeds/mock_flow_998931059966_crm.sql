@@ -47,7 +47,7 @@ inserted_client AS (
         '@mobile_test_998931059966', 'Basic', 250000, FALSE, FALSE,
         now(), now() - interval '40 days', NULL, now(),
         'Mock flow client for mobile reservations/treatments',
-        80000, 'bronze', 'CRM-MOCK-931059966', NULL, 2450000
+        80000, 'bronze', NULL, NULL, 2450000
     WHERE NOT EXISTS (SELECT 1 FROM existing_client)
     ON CONFLICT (client_id) DO UPDATE SET
         client_firstname = EXCLUDED.client_firstname,
@@ -363,36 +363,25 @@ SELECT '93105966-0001-4001-8001-000000000001'::uuid,
        'pay_for_action', 'cash', 100000, 200000, 0,
        0, 200000, 250000, 200000, 0, 650000,
        0, 0, 0, now() - interval '1 day', now() - interval '1 day',
-       931059001, 931059001, client_id, NULL, doctor_one_id, doctor_one_id,
-       NULL, NULL, 'Mock prepayment for upcoming accepted visit'
+       931059001, 931059001, client_id, NULL::integer, NULL::integer, doctor_one_id,
+       NULL::integer, NULL::bigint, 'Mock prepayment for upcoming accepted visit'
 FROM _mobile_flow_ctx
 UNION ALL
 SELECT '93105966-0002-4002-8002-000000000002'::uuid,
        'pay_for_action', 'terminal', 250000, 900000, 0,
        0, 900000, 1000000, 900000, 0, 900000,
        0, 0, 0, now() - interval '4 days', now() - interval '4 days',
-       931059002, 931059002, client_id, NULL, doctor_two_id, doctor_two_id,
-       NULL, NULL, 'Mock partial payment for in-progress treatment'
+       931059002, 931059002, client_id, NULL::integer, NULL::integer, doctor_two_id,
+       NULL::integer, NULL::bigint, 'Mock partial payment for in-progress treatment'
 FROM _mobile_flow_ctx
 UNION ALL
 SELECT '93105966-0003-4003-8003-000000000003'::uuid,
        'pay_for_action', 'cash', 350000, 350000, 0,
        0, 350000, 400000, 350000, 0, 350000,
        0, 0, 0, now() - interval '18 days', now() - interval '18 days',
-       931059004, 931059003, client_id, NULL, doctor_one_id, doctor_one_id,
-       NULL, NULL, 'Mock full payment for completed treatment'
+       931059004, 931059003, client_id, NULL::integer, NULL::integer, doctor_one_id,
+       NULL::integer, NULL::bigint, 'Mock full payment for completed treatment'
 FROM _mobile_flow_ctx;
-
-SELECT setval(pg_get_serial_sequence('client_client', 'client_id'), COALESCE((SELECT max(client_id) FROM client_client), 1), TRUE);
-SELECT setval(pg_get_serial_sequence('client_client_public_phone', 'client_phone_id'), COALESCE((SELECT max(client_phone_id) FROM client_client_public_phone), 1), TRUE);
-SELECT setval(pg_get_serial_sequence('user_user', 'id'), COALESCE((SELECT max(id) FROM user_user), 1), TRUE);
-SELECT setval(pg_get_serial_sequence('work_work', 'work_id'), COALESCE((SELECT max(work_id) FROM work_work), 1), TRUE);
-SELECT setval(pg_get_serial_sequence('reservation_reservation', 'reservation_id'), COALESCE((SELECT max(reservation_id) FROM reservation_reservation), 1), TRUE);
-SELECT setval(pg_get_serial_sequence('reservation_reservationrequest', 'id'), COALESCE((SELECT max(id) FROM reservation_reservationrequest), 1), TRUE);
-SELECT setval(pg_get_serial_sequence('medcard_tooth', 'tooth_id'), COALESCE((SELECT max(tooth_id) FROM medcard_tooth), 1), TRUE);
-SELECT setval(pg_get_serial_sequence('medcard_medicalcard', 'card_id'), COALESCE((SELECT max(card_id) FROM medcard_medicalcard), 1), TRUE);
-SELECT setval(pg_get_serial_sequence('medcard_stage', 'stage_id'), COALESCE((SELECT max(stage_id) FROM medcard_stage), 1), TRUE);
-SELECT setval(pg_get_serial_sequence('medcard_action', 'action_id'), COALESCE((SELECT max(action_id) FROM medcard_action), 1), TRUE);
 
 SELECT 'seeded_crm_client_id' AS key, client_id AS value FROM _mobile_flow_ctx;
 
