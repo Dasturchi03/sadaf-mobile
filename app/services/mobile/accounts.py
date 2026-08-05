@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 import secrets
-from datetime import date, datetime, timedelta, timezone
+from datetime import date, datetime, timezone
 from decimal import Decimal
 from typing import Any
 
@@ -20,12 +20,11 @@ from app.models.mobile import (
     OTPCode,
     ReferralApplication,
     ReferralCode,
-    ReservationRequest,
     Notification,
     UserContact,
 )
 from app.services.common import db_common as db
-from app.services.mobile import sms
+from app.services.mobile import reservations, sms, treatments
 from app.utils.deps.auth import auth_handler
 from app.utils.di.db_ctx import CRM_DB
 
@@ -36,7 +35,6 @@ events_t = MobileEvent.__table__
 referral_codes_t = ReferralCode.__table__
 referral_applications_t = ReferralApplication.__table__
 cashback_entries_t = CashbackEntry.__table__
-reservation_requests_t = ReservationRequest.__table__
 notifications_t = Notification.__table__
 user_contacts_t = UserContact.__table__
 
@@ -485,15 +483,13 @@ async def status(auth_user: dict[str, Any]) -> dict[str, Any]:
 
 async def dashboard(auth_user: dict[str, Any]) -> dict[str, Any]:
     profile = await me(auth_user)
-    active_requests = await db.orm_scalar(
-        select(func.count())
-        .select_from(reservation_requests_t)
-        .where(
-            reservation_requests_t.c.user_id == auth_user["id"],
-            reservation_requests_t.c.status.in_(["draft", "approved", "approved_by_patient"]),
-            reservation_requests_t.c.reservation_date >= func.current_date(),
-        )
+    crm_client_id = auth_user.get("crm_client_id") or profile.get("client_id")
+    active_reservations = await reservations.user_reservation_count(
+        crm_client_id,
+        status="active",
     )
+    pending_requests = await reservations.pending_request_count(auth_user["id"])
+    active_treatments = await treatments.active_treatment_count(crm_client_id)
     unread_notifications = await db.orm_scalar(
         select(func.count())
         .select_from(notifications_t)
@@ -503,45 +499,31 @@ async def dashboard(auth_user: dict[str, Any]) -> dict[str, Any]:
         )
     )
     referrals_count = await _referrals_count(auth_user["id"])
-    next_request = await db.orm_one(
-        select(
-            reservation_requests_t.c.id,
-            reservation_requests_t.c.crm_reservation_id,
-            reservation_requests_t.c.doctor_name,
-            reservation_requests_t.c.reservation_date,
-            reservation_requests_t.c.reservation_time,
-            reservation_requests_t.c.slot_minutes,
-        )
-        .where(
-            reservation_requests_t.c.user_id == auth_user["id"],
-            reservation_requests_t.c.status.in_(["approved", "approved_by_patient"]),
-            reservation_requests_t.c.reservation_date >= func.current_date(),
-        )
-        .order_by(reservation_requests_t.c.reservation_date, reservation_requests_t.c.reservation_time)
-        .limit(1)
-    )
+    next_reservation = await reservations.next_user_reservation(crm_client_id)
     return {
         "profile": profile,
         "counters": {
-            "active_reservations": active_requests,
-            "active_treatments": 0,
+            "active_reservations": active_reservations + pending_requests,
+            "active_treatments": active_treatments,
             "unread_notifications": unread_notifications,
             "referrals_count": referrals_count,
+            "pending_reservation_requests": pending_requests,
         },
         "loyalty": await loyalty(auth_user),
         "next_reservation": (
             {
-                "reservation_id": next_request["crm_reservation_id"] or next_request["id"],
-                "doctor_name": next_request["doctor_name"],
-                "service_title": None,
-                "date": next_request["reservation_date"].strftime("%d-%m-%Y"),
-                "start_time": next_request["reservation_time"].strftime("%H:%M"),
-                "end_time": (
-                    datetime.combine(next_request["reservation_date"], next_request["reservation_time"])
-                    + timedelta(minutes=next_request["slot_minutes"])
-                ).strftime("%H:%M"),
+                "reservation_id": next_reservation["reservation_id"],
+                "doctor_name": (
+                    (next_reservation.get("reservation_doctor") or {}).get("full_name")
+                ),
+                "service_title": (
+                    (next_reservation.get("reservation_work") or {}).get("work_title")
+                ),
+                "date": next_reservation["reservation_date"],
+                "start_time": next_reservation["reservation_start_time"],
+                "end_time": next_reservation["reservation_end_time"],
             }
-            if next_request
+            if next_reservation
             else None
         ),
     }

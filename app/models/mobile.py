@@ -115,6 +115,7 @@ class ReservationRequest(Base):
     crm_client_id: Mapped[int | None] = mapped_column(Integer)
     crm_doctor_id: Mapped[int] = mapped_column(Integer, nullable=False)
     crm_work_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    crm_request_id: Mapped[int | None] = mapped_column(Integer, unique=True)
     crm_reservation_id: Mapped[int | None] = mapped_column(Integer)
     flutter_reservation_id: Mapped[str | None] = mapped_column(String(255), unique=True)
     doctor_name: Mapped[str | None] = mapped_column(String(255))

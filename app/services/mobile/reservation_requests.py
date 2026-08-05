@@ -8,6 +8,7 @@ from fastapi import HTTPException
 from sqlalchemy import func, insert, select, text, update
 
 from app.api.mobile import schemas as sc
+from app.api.auth.models.users import Users
 from app.models.mobile import MobileEvent, ReservationRequest
 from app.services.common import db_common as db
 from app.services.mobile import notifications
@@ -19,6 +20,7 @@ from app.utils.di.db_ctx import CRM_DB
 
 reservation_requests_t = ReservationRequest.__table__
 events_t = MobileEvent.__table__
+users_t = Users.__table__
 
 
 STATUS_LABELS = {
@@ -172,6 +174,7 @@ def _serialize(row: dict[str, Any], doctor: dict[str, Any] | None, work: dict[st
     return {
         "id": row["id"],
         "flutter_reservation_id": row.get("flutter_reservation_id"),
+        "crm_request_id": row.get("crm_request_id"),
         "doctor": doctor,
         "reservation_work": work,
         "doctor_name": row.get("doctor_name"),
@@ -183,7 +186,182 @@ def _serialize(row: dict[str, Any], doctor: dict[str, Any] | None, work: dict[st
     }
 
 
+async def _mobile_user(user_id: int) -> dict[str, Any]:
+    user = await db.orm_one(select(users_t).where(users_t.c.id == user_id))
+    if not user:
+        raise HTTPException(status_code=404, detail="User was not found")
+    return user
+
+
+async def _ensure_crm_client(auth_user: dict[str, Any]) -> int:
+    if auth_user.get("crm_client_id"):
+        return int(auth_user["crm_client_id"])
+
+    user = await _mobile_user(auth_user["id"])
+    phone_number = user.get("phone_number")
+    if not phone_number:
+        raise HTTPException(
+            status_code=400,
+            detail={"phone_number": "User phone number is required for CRM sync"},
+        )
+
+    existing_client_id = await CRM_DB.fetchval(
+        """
+        SELECT c.client_id
+        FROM client_client_public_phone p
+        JOIN client_client c ON c.client_id = p.client_id
+        WHERE p.public_phone = $1
+          AND COALESCE(p.deleted, FALSE) = FALSE
+          AND COALESCE(c.deleted, FALSE) = FALSE
+        ORDER BY p.client_phone_id ASC
+        LIMIT 1
+        """,
+        phone_number,
+    )
+    if existing_client_id:
+        await db.orm_execute(
+            update(users_t)
+            .where(users_t.c.id == auth_user["id"])
+            .values(crm_client_id=existing_client_id, updated_at=func.now())
+        )
+        auth_user["crm_client_id"] = existing_client_id
+        return int(existing_client_id)
+
+    crm_client_id = await CRM_DB.fetchval(
+        """
+        INSERT INTO client_client(
+            client_firstname, client_lastname, client_father_name, client_birthdate,
+            client_gender, client_address, client_citizenship, client_telegram,
+            client_type, client_balance, archive, deleted, updated_at, created_at,
+            client_user_id, client_last_viewed_at, note, cashback_balance,
+            loyalty_tier, referral_code, referred_by_id, total_spent_amount
+        )
+        VALUES (
+            $1, $2, $3, COALESCE($4::date, DATE '1900-01-01'),
+            COALESCE($5, 'male'), $6, COALESCE($7, 'UZ'), $8,
+            'Basic', 0, FALSE, FALSE, now(), now(),
+            NULL, now(), 'Created from Sadaf mobile app reservation request',
+            0, 'bronze', NULL, NULL, 0
+        )
+        RETURNING client_id
+        """,
+        user.get("first_name") or "Mobile",
+        user.get("last_name") or "Patient",
+        user.get("father_name"),
+        user.get("birthdate"),
+        user.get("gender"),
+        user.get("address"),
+        user.get("citizenship"),
+        user.get("telegram"),
+    )
+    await CRM_DB.execute(
+        """
+        INSERT INTO client_client_public_phone(
+            public_phone, deleted, updated_at, created_at, client_id
+        )
+        VALUES ($1, FALSE, now(), now(), $2)
+        """,
+        phone_number,
+        crm_client_id,
+    )
+    await db.orm_execute(
+        update(users_t)
+        .where(users_t.c.id == auth_user["id"])
+        .values(crm_client_id=crm_client_id, updated_at=func.now())
+    )
+    auth_user["crm_client_id"] = crm_client_id
+    return int(crm_client_id)
+
+
+async def _create_crm_reservation_request(
+    *,
+    crm_client_id: int,
+    doctor_id: int,
+    work_id: int,
+    flutter_reservation_id: str | None,
+    doctor_name: str | None,
+    note: str | None,
+    target_date,
+    start_time,
+) -> int:
+    return int(
+        await CRM_DB.fetchval(
+            """
+            INSERT INTO reservation_reservationrequest(
+                created_at, updated_at, flutter_reservation_id, status,
+                doctor_name, note, date, time,
+                client_id, doctor_id, reservation_id, reservation_work_id
+            )
+            VALUES (
+                now(), now(), $1, 'draft',
+                $2, $3, $4, $5,
+                $6, $7, NULL, $8
+            )
+            RETURNING id
+            """,
+            flutter_reservation_id,
+            doctor_name,
+            note,
+            target_date,
+            start_time,
+            crm_client_id,
+            doctor_id,
+            work_id,
+        )
+    )
+
+
+async def _create_crm_doctor_notification(*, doctor_id: int, crm_request_id: int) -> None:
+    await CRM_DB.execute(
+        """
+        INSERT INTO notifications_notification(
+            notification_receiver_id, notification_reservation_id,
+            notification_type, notification_message, is_read, created_at
+        )
+        VALUES (
+            $1, NULL, 'reservation_request_created',
+            'New reservation request received', FALSE, now()
+        )
+        """,
+        doctor_id,
+    )
+
+
+async def _crm_request(crm_request_id: int | None) -> dict[str, Any] | None:
+    if not crm_request_id:
+        return None
+    row = await CRM_DB.fetchrow(
+        """
+        SELECT id, status, reservation_id
+        FROM reservation_reservationrequest
+        WHERE id = $1
+        """,
+        crm_request_id,
+    )
+    return dict(row) if row else None
+
+
+async def _refresh_local_from_crm(row: dict[str, Any]) -> dict[str, Any]:
+    crm = await _crm_request(row.get("crm_request_id"))
+    if not crm:
+        return row
+    if row.get("status") == crm["status"] and row.get("crm_reservation_id") == crm["reservation_id"]:
+        return row
+    updated = await db.orm_one(
+        update(reservation_requests_t)
+        .where(reservation_requests_t.c.id == row["id"])
+        .values(
+            status=crm["status"],
+            crm_reservation_id=crm["reservation_id"],
+            updated_at=func.now(),
+        )
+        .returning(reservation_requests_t)
+    )
+    return updated or row
+
+
 async def _serialize_row(row: dict[str, Any]):
+    row = await _refresh_local_from_crm(row)
     doctor = None
     work = None
     try:
@@ -216,6 +394,18 @@ async def list_requests(auth_user: dict[str, Any], *, page: int | None, page_siz
     return paginate_rows(data, count=count, page=page, page_size=page_size)
 
 
+async def detail_request(auth_user: dict[str, Any], request_id: int):
+    row = await db.orm_one(
+        select(reservation_requests_t).where(
+            reservation_requests_t.c.id == request_id,
+            reservation_requests_t.c.user_id == auth_user["id"],
+        )
+    )
+    if not row:
+        raise HTTPException(status_code=404, detail="Reservation request was not found")
+    return await _serialize_row(row)
+
+
 async def create_request(auth_user: dict[str, Any], request: sc.MobileReservationRequestCreate):
     slot_minutes = max(request.slot_minutes or 60, 15)
     doctor = await doctor_detail(request.doctor_id)
@@ -232,23 +422,40 @@ async def create_request(auth_user: dict[str, Any], request: sc.MobileReservatio
         start_time=request.time,
         slot_minutes=slot_minutes,
     )
-    row = await db.orm_one(
-        insert(reservation_requests_t)
-        .values(
-            user_id=auth_user["id"],
-            crm_client_id=auth_user.get("crm_client_id"),
-            crm_doctor_id=request.doctor_id,
-            crm_work_id=request.reservation_work_id,
+    async with CRM_DB.transaction():
+        crm_client_id = await _ensure_crm_client(auth_user)
+        crm_request_id = await _create_crm_reservation_request(
+            crm_client_id=crm_client_id,
+            doctor_id=request.doctor_id,
+            work_id=request.reservation_work_id,
             flutter_reservation_id=request.flutter_reservation_id,
             doctor_name=doctor.get("full_name"),
-            status="approved_by_patient",
             note=request.note,
-            reservation_date=request.date,
-            reservation_time=request.time,
-            slot_minutes=slot_minutes,
+            target_date=request.date,
+            start_time=request.time,
         )
-        .returning(reservation_requests_t)
-    )
+        await _create_crm_doctor_notification(
+            doctor_id=request.doctor_id,
+            crm_request_id=crm_request_id,
+        )
+        row = await db.orm_one(
+            insert(reservation_requests_t)
+            .values(
+                user_id=auth_user["id"],
+                crm_client_id=crm_client_id,
+                crm_doctor_id=request.doctor_id,
+                crm_work_id=request.reservation_work_id,
+                crm_request_id=crm_request_id,
+                flutter_reservation_id=request.flutter_reservation_id,
+                doctor_name=doctor.get("full_name"),
+                status="draft",
+                note=request.note,
+                reservation_date=request.date,
+                reservation_time=request.time,
+                slot_minutes=slot_minutes,
+            )
+            .returning(reservation_requests_t)
+        )
     await db.orm_execute(
         insert(events_t).values(
             event_type="reservation_request.created",
@@ -257,7 +464,8 @@ async def create_request(auth_user: dict[str, Any], request: sc.MobileReservatio
             payload={
                 "request_id": row["id"],
                 "user_id": auth_user["id"],
-                "crm_client_id": auth_user.get("crm_client_id"),
+                "crm_client_id": row.get("crm_client_id"),
+                "crm_request_id": row.get("crm_request_id"),
                 "crm_doctor_id": request.doctor_id,
                 "crm_work_id": request.reservation_work_id,
                 "date": request.date.isoformat(),
@@ -292,17 +500,98 @@ async def create_request(auth_user: dict[str, Any], request: sc.MobileReservatio
     )
 
 
-async def confirm_request(auth_user: dict[str, Any], request_id: int):
-    row = await db.orm_one(
-        update(reservation_requests_t)
-        .where(
+async def cancel_request(auth_user: dict[str, Any], request_id: int):
+    existing = await db.orm_one(
+        select(reservation_requests_t).where(
             reservation_requests_t.c.id == request_id,
             reservation_requests_t.c.user_id == auth_user["id"],
-            reservation_requests_t.c.status.in_(["draft", "approved", "approved_by_patient"]),
         )
-        .values(status="approved_by_patient", updated_at=func.now())
-        .returning(reservation_requests_t)
     )
+    if not existing:
+        raise HTTPException(status_code=404, detail="Reservation request was not found")
+    existing = await _refresh_local_from_crm(existing)
+    if existing["status"] in {"cancelled", "cancelled_by_patient"}:
+        raise HTTPException(status_code=400, detail="Reservation request is already cancelled")
+
+    async with CRM_DB.transaction():
+        if existing.get("crm_request_id"):
+            await CRM_DB.execute(
+                """
+                UPDATE reservation_reservationrequest
+                SET status = 'cancelled_by_patient', updated_at = now()
+                WHERE id = $1
+                """,
+                existing["crm_request_id"],
+            )
+        if existing.get("crm_reservation_id"):
+            await CRM_DB.execute(
+                """
+                UPDATE reservation_reservation
+                SET cancelled = TRUE, cancelled_by_patient = TRUE
+                WHERE reservation_id = $1
+                """,
+                existing["crm_reservation_id"],
+            )
+        row = await db.orm_one(
+            update(reservation_requests_t)
+            .where(
+                reservation_requests_t.c.id == request_id,
+                reservation_requests_t.c.user_id == auth_user["id"],
+            )
+            .values(status="cancelled_by_patient", updated_at=func.now())
+            .returning(reservation_requests_t)
+        )
+    await db.orm_execute(
+        insert(events_t).values(
+            event_type="reservation_request.cancelled_by_patient",
+            aggregate_type="reservation_request",
+            aggregate_id=str(row["id"]),
+            payload={
+                "request_id": row["id"],
+                "user_id": auth_user["id"],
+                "crm_request_id": row.get("crm_request_id"),
+                "crm_reservation_id": row.get("crm_reservation_id"),
+            },
+        )
+    )
+    return await _serialize_row(row)
+
+
+async def confirm_request(auth_user: dict[str, Any], request_id: int):
+    existing = await db.orm_one(
+        select(reservation_requests_t).where(
+            reservation_requests_t.c.id == request_id,
+            reservation_requests_t.c.user_id == auth_user["id"],
+        )
+    )
+    if not existing:
+        raise HTTPException(status_code=404, detail="Reservation request was not found")
+    existing = await _refresh_local_from_crm(existing)
+    if existing["status"] != "approved" or not existing.get("crm_reservation_id"):
+        raise HTTPException(
+            status_code=400,
+            detail="Only clinic-approved requests with reservation can be confirmed",
+        )
+
+    async with CRM_DB.transaction():
+        await CRM_DB.execute(
+            """
+            UPDATE reservation_reservationrequest
+            SET status = 'approved_by_patient', updated_at = now()
+            WHERE id = $1
+            """,
+            existing["crm_request_id"],
+        )
+        row = await db.orm_one(
+            update(reservation_requests_t)
+            .where(
+                reservation_requests_t.c.id == request_id,
+                reservation_requests_t.c.user_id == auth_user["id"],
+                reservation_requests_t.c.status == "approved",
+            )
+            .values(status="approved_by_patient", updated_at=func.now())
+            .returning(reservation_requests_t)
+        )
     if not row:
         raise HTTPException(status_code=404, detail="Reservation request was not found")
     await db.orm_execute(

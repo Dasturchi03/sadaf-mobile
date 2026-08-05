@@ -163,6 +163,26 @@ async def mobile_reservation_doctor_works(id: int):
     return await reservations.doctor_works(doctor_id=id)
 
 
+@router.get("/mobile/reservations")
+async def mobile_reservations(
+    auth_user: Auth,
+    status: str | None = None,
+    page: int | None = None,
+    page_size: int | None = None,
+):
+    return await reservations.list_user_reservations(
+        auth_user,
+        status=status,
+        page=page,
+        page_size=page_size,
+    )
+
+
+@router.get("/mobile/reservations/{id}")
+async def mobile_reservation_detail(id: int, auth_user: Auth):
+    return await reservations.user_reservation_detail(auth_user, id)
+
+
 @router.get("/mobile/treatments")
 async def mobile_treatments(
     auth_user: Auth,
@@ -264,6 +284,16 @@ async def mobile_reservation_requests_list(
 )
 async def mobile_reservation_requests(request: ReservationRequestBody, auth_user: Auth):
     return await reservation_requests.create_request(auth_user, request)
+
+
+@router.get("/mobile/reservation-requests/{id}")
+async def mobile_reservation_request_detail(id: int, auth_user: Auth):
+    return await reservation_requests.detail_request(auth_user, id)
+
+
+@router.patch("/mobile/reservation-requests/{id}/cancel")
+async def mobile_reservation_request_cancel(id: int, auth_user: Auth):
+    return await reservation_requests.cancel_request(auth_user, id)
 
 
 @router.post("/mobile/referral/apply-code", openapi_extra=body_or_form_openapi(sc.ApplyReferralCodeRequest))

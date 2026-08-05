@@ -383,6 +383,28 @@ async def list_treatments(
     return paginate_rows(data, count=count or len(data), page=page, page_size=page_size)
 
 
+async def active_treatment_count(client_id: int | None) -> int:
+    if not client_id:
+        return 0
+    try:
+        return int(
+            await CRM_DB.fetchval(
+                """
+                SELECT COUNT(*)
+                FROM medcard_medicalcard
+                WHERE client_id = $1
+                  AND COALESCE(deleted, FALSE) = FALSE
+                  AND COALESCE(card_is_cancelled, FALSE) = FALSE
+                  AND COALESCE(card_is_done, FALSE) = FALSE
+                """,
+                client_id,
+            )
+            or 0
+        )
+    except (UndefinedTableError, UndefinedColumnError):
+        return 0
+
+
 async def treatment_detail(auth_user: dict[str, Any], treatment_id: int):
     client_id = auth_user.get("crm_client_id")
     if not client_id:
