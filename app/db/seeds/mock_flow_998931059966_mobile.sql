@@ -22,7 +22,7 @@ WITH mobile_ctx AS (
     SELECT COALESCE(
         (SELECT crm_client_id FROM users WHERE phone_number = '+998931059966' AND crm_client_id IS NOT NULL LIMIT 1),
         (SELECT crm_client_id FROM user_contacts WHERE phone_number = '+998931059966' AND crm_client_id IS NOT NULL LIMIT 1),
-        :crm_client_id::integer
+        :'crm_client_id'::integer
     ) AS crm_client_id
 ),
 upserted_user AS (
