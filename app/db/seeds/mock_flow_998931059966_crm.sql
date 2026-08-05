@@ -293,11 +293,11 @@ INSERT INTO medcard_medicalcard(
     card_is_done, card_is_paid, card_is_cancelled, card_finished_at,
     card_updated_at, card_created_at, archive, deleted, client_id
 )
-SELECT card_one_id, 650000, 650000, 0, FALSE, FALSE, FALSE, NULL,
+SELECT card_one_id, 650000, 650000, 0, FALSE, FALSE, FALSE, NULL::timestamp with time zone,
        now(), now() - interval '7 days', FALSE, FALSE, client_id
 FROM _mobile_flow_ctx
 UNION ALL
-SELECT card_two_id, 900000, 900000, 0, FALSE, FALSE, FALSE, NULL,
+SELECT card_two_id, 900000, 900000, 0, FALSE, FALSE, FALSE, NULL::timestamp with time zone,
        now(), now() - interval '12 days', FALSE, FALSE, client_id
 FROM _mobile_flow_ctx
 UNION ALL
@@ -359,7 +359,7 @@ INSERT INTO transaction_transaction(
     transaction_credit_id, transaction_receiver_id, transaction_user_id,
     financial_report_id, updated_by_id, comment
 )
-SELECT '93105966-0001-4001-8001-000000000001',
+SELECT '93105966-0001-4001-8001-000000000001'::uuid,
        'pay_for_action', 'cash', 100000, 200000, 0,
        0, 200000, 250000, 200000, 0, 650000,
        0, 0, 0, now() - interval '1 day', now() - interval '1 day',
@@ -367,7 +367,7 @@ SELECT '93105966-0001-4001-8001-000000000001',
        NULL, NULL, 'Mock prepayment for upcoming accepted visit'
 FROM _mobile_flow_ctx
 UNION ALL
-SELECT '93105966-0002-4002-8002-000000000002',
+SELECT '93105966-0002-4002-8002-000000000002'::uuid,
        'pay_for_action', 'terminal', 250000, 900000, 0,
        0, 900000, 1000000, 900000, 0, 900000,
        0, 0, 0, now() - interval '4 days', now() - interval '4 days',
@@ -375,7 +375,7 @@ SELECT '93105966-0002-4002-8002-000000000002',
        NULL, NULL, 'Mock partial payment for in-progress treatment'
 FROM _mobile_flow_ctx
 UNION ALL
-SELECT '93105966-0003-4003-8003-000000000003',
+SELECT '93105966-0003-4003-8003-000000000003'::uuid,
        'pay_for_action', 'cash', 350000, 350000, 0,
        0, 350000, 400000, 350000, 0, 350000,
        0, 0, 0, now() - interval '18 days', now() - interval '18 days',
