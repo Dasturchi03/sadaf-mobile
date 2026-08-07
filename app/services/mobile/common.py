@@ -3,10 +3,12 @@ from __future__ import annotations
 import json
 from math import ceil
 from typing import Any
+from urllib.parse import quote
 
 import asyncpg
 from fastapi import HTTPException
 
+from app.core.config import settings
 from app.utils.i18n import get_language
 
 
@@ -65,3 +67,25 @@ def offset_limit(page: int | None, page_size: int | None) -> tuple[int | None, i
 
 def not_found(detail: str):
     raise HTTPException(status_code=404, detail=detail)
+
+
+def crm_media_url(value: str | None) -> str | None:
+    if not value:
+        return None
+    raw = str(value).strip()
+    if not raw:
+        return None
+    if raw.startswith(("http://", "https://")):
+        return raw
+
+    base = (settings.CRM_MEDIA_BASE_URL or "https://api.sadaf-clinic.uz/media").strip()
+    if not base.startswith(("http://", "https://")):
+        base = f"https://{base}"
+    base = base.rstrip("/")
+    if not base.endswith("/media"):
+        base = f"{base}/media"
+
+    path = raw.lstrip("/")
+    if path.startswith("media/"):
+        path = path[len("media/"):]
+    return f"{base}/{quote(path, safe='/')}"

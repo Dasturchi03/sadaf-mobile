@@ -12,7 +12,7 @@ from app.api.mobile import schemas as sc
 from app.core.config import settings
 from app.models.mobile import MobileEvent, PartnerInquiry, VacancyApplication
 from app.services.common import db_common as db
-from app.services.mobile.common import as_dict, as_list, lang_suffix, not_found, offset_limit, paginate_rows
+from app.services.mobile.common import as_dict, as_list, crm_media_url, lang_suffix, not_found, offset_limit, paginate_rows
 from app.utils.di.db_ctx import CRM_DB
 
 
@@ -165,6 +165,8 @@ async def articles(
             args.extend([limit, offset])
             query += f" LIMIT ${len(args) - 1} OFFSET ${len(args)}"
         rows = as_list(await CRM_DB.fetch(query, *args))
+        for row in rows:
+            row["cover_image"] = crm_media_url(row.get("cover_image"))
     except UndefinedTableError:
         count = 0
         rows = []

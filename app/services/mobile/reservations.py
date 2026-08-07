@@ -9,7 +9,8 @@ from sqlalchemy import func, select
 
 from app.models.mobile import ReservationRequest
 from app.services.common import db_common as db
-from app.services.mobile.common import as_dict, as_list, lang_suffix, offset_limit, paginate_rows
+from app.services.mobile import demo_account
+from app.services.mobile.common import as_dict, as_list, crm_media_url, lang_suffix, offset_limit, paginate_rows
 from app.utils.di.db_ctx import CRM_DB
 from app.utils.i18n import localized
 
@@ -76,7 +77,7 @@ def _serialize_doctor(row: dict[str, Any]) -> dict[str, Any] | None:
         "id": doctor_id,
         "user_firstname": row.get("user_firstname"),
         "user_lastname": row.get("user_lastname"),
-        "user_image": row.get("user_image"),
+        "user_image": crm_media_url(row.get("user_image")),
         "full_name": full_name or None,
     }
 
@@ -308,6 +309,25 @@ async def list_user_reservations(
     page: int | None,
     page_size: int | None,
 ):
+    if demo_account.is_demo_auth(auth_user):
+        rows = demo_account.section("reservations", [])
+        if status == "active":
+            rows = [
+                row for row in rows
+                if row.get("reservation_date") and not row.get("cancelled")
+            ]
+        elif status == "history":
+            rows = []
+        elif status == "cancelled":
+            rows = [row for row in rows if row.get("cancelled")]
+        if page:
+            safe_size = max(page_size or 10, 1)
+            start = (max(page, 1) - 1) * safe_size
+            page_rows = rows[start : start + safe_size]
+        else:
+            page_rows = rows
+        return paginate_rows(page_rows, count=len(rows), page=page, page_size=page_size)
+
     client_id = auth_user.get("crm_client_id")
     if not client_id:
         return paginate_rows([], count=0, page=page, page_size=page_size)
@@ -344,6 +364,12 @@ async def list_user_reservations(
 
 
 async def user_reservation_detail(auth_user: dict[str, Any], reservation_id: int):
+    if demo_account.is_demo_auth(auth_user):
+        for row in demo_account.section("reservations", []):
+            if row.get("reservation_id") == reservation_id:
+                return row
+        raise HTTPException(status_code=404, detail="Reservation was not found")
+
     client_id = auth_user.get("crm_client_id")
     if not client_id:
         raise HTTPException(status_code=404, detail="Reservation was not found")
@@ -439,7 +465,10 @@ async def doctors(specialization: str | None = None, category_id: int | None = N
         """,
         *args,
     )
-    return as_list(rows)
+    data = as_list(rows)
+    for item in data:
+        item["user_image"] = crm_media_url(item.get("user_image"))
+    return data
 
 
 async def doctor_detail(doctor_id: int):
@@ -477,7 +506,9 @@ async def doctor_detail(doctor_id: int):
     )
     if not row:
         raise HTTPException(status_code=404, detail="Doctor not found")
-    return as_dict(row)
+    data = as_dict(row)
+    data["user_image"] = crm_media_url(data.get("user_image"))
+    return data
 
 
 async def doctor_works(doctor_id: int):

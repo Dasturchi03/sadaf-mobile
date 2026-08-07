@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 import secrets
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from decimal import Decimal
 from typing import Any
 
@@ -24,7 +24,7 @@ from app.models.mobile import (
     UserContact,
 )
 from app.services.common import db_common as db
-from app.services.mobile import reservations, sms, treatments
+from app.services.mobile import demo_account, reservations, sms, treatments
 from app.utils.deps.auth import auth_handler
 from app.utils.di.db_ctx import CRM_DB
 
@@ -352,6 +352,9 @@ async def _referrals_count(user_id: int) -> int:
 
 
 async def _serialize_profile(user: dict[str, Any]) -> dict[str, Any]:
+    if demo_account.is_demo_user(user):
+        return demo_account.profile(user)
+
     crm = await _get_crm_client_by_id(user.get("crm_client_id"))
     referral_code = await _ensure_referral_code(user["id"])
     mobile_cashback = await _cashback_balance(user["id"])
@@ -424,6 +427,12 @@ async def update_me(auth_user: dict[str, Any], request: sc.MobileMeUpdateRequest
 
 
 async def loyalty(auth_user: dict[str, Any]) -> dict[str, Any]:
+    if demo_account.is_demo_auth(auth_user):
+        profile = await me(auth_user)
+        data = demo_account.section("loyalty", {})
+        data["client_id"] = profile["client_id"]
+        return data
+
     profile = await me(auth_user)
     referrals_count = await _referrals_count(auth_user["id"])
     return {
@@ -441,6 +450,13 @@ async def loyalty(auth_user: dict[str, Any]) -> dict[str, Any]:
 
 
 async def status(auth_user: dict[str, Any]) -> dict[str, Any]:
+    if demo_account.is_demo_auth(auth_user):
+        profile = await me(auth_user)
+        data = demo_account.section("status", {})
+        data["client_id"] = profile["client_id"]
+        data.setdefault("full_name", profile["full_name"])
+        return data
+
     profile = await me(auth_user)
     referrals_count = await _referrals_count(auth_user["id"])
     next_tier = _next_tier(profile["loyalty_tier"])
@@ -483,6 +499,12 @@ async def status(auth_user: dict[str, Any]) -> dict[str, Any]:
 
 async def dashboard(auth_user: dict[str, Any]) -> dict[str, Any]:
     profile = await me(auth_user)
+    if demo_account.is_demo_auth(auth_user):
+        data = demo_account.section("dashboard", {})
+        data["profile"] = profile
+        data["loyalty"] = await loyalty(auth_user)
+        return data
+
     crm_client_id = auth_user.get("crm_client_id") or profile.get("client_id")
     active_reservations = await reservations.user_reservation_count(
         crm_client_id,
@@ -574,6 +596,17 @@ async def _store_otp(
 
 async def otp_request(request: sc.MobileOTPRequest) -> dict[str, Any]:
     phone = _normalize_phone(request.phone_number)
+    if demo_account.is_demo_phone(phone):
+        await demo_account.ensure_user(phone)
+        expires_at = datetime.now(timezone.utc) + timedelta(days=365)
+        return {
+            "message": "OTP code has been sent",
+            "phone_number": phone,
+            "language": "uz",
+            "expires_at": expires_at.isoformat(),
+            "is_demo": True,
+        }
+
     user = await _get_user_by_phone(phone)
     user = await _resolve_login_user(phone, user)
     await _remember_user_contact(phone_number=phone, purpose="login", user=user)
@@ -589,6 +622,17 @@ async def otp_request(request: sc.MobileOTPRequest) -> dict[str, Any]:
 
 async def otp_register_request(request: sc.MobileOTPRegisterRequest) -> dict[str, Any]:
     phone = _normalize_phone(request.phone_number)
+    if demo_account.is_demo_phone(phone):
+        await demo_account.ensure_user(phone)
+        expires_at = datetime.now(timezone.utc) + timedelta(days=365)
+        return {
+            "message": "OTP code has been sent",
+            "phone_number": phone,
+            "language": "uz",
+            "expires_at": expires_at.isoformat(),
+            "is_demo": True,
+        }
+
     existing_crm = await _get_crm_client_by_phone(phone)
     existing_mobile = await _get_user_by_phone(phone)
     if existing_crm or (existing_mobile and existing_mobile.get("is_verified")):
@@ -642,6 +686,24 @@ async def otp_register_request(request: sc.MobileOTPRegisterRequest) -> dict[str
 
 async def otp_verify(request: sc.MobileOTPVerify, *, purpose_hint: str | None = None):
     phone = _normalize_phone(request.phone_number)
+    if demo_account.is_demo_phone(phone):
+        if request.otp_code != settings.DEMO_ACCOUNT_OTP:
+            raise HTTPException(status_code=400, detail={"otp_code": "Invalid OTP code"})
+        user = await demo_account.ensure_user(phone)
+        await demo_account.touch_login(user["id"])
+        user = await _get_user_by_id(user["id"])
+        access = auth_handler.encode_token(user)
+        refresh, _ = await auth_handler.issue_refresh_token(user["id"])
+        return {
+            "refresh": refresh,
+            "access": access,
+            "user_id": user["id"],
+            "client_id": user.get("crm_client_id"),
+            "username": user.get("username"),
+            "user_fullname": _full_name(user),
+            "is_demo": True,
+        }
+
     user = await _get_user_by_phone(phone)
     purpose = purpose_hint or "login"
     if purpose == "login":

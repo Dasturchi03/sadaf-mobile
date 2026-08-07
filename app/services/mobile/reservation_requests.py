@@ -11,7 +11,7 @@ from app.api.mobile import schemas as sc
 from app.api.auth.models.users import Users
 from app.models.mobile import MobileEvent, ReservationRequest
 from app.services.common import db_common as db
-from app.services.mobile import notifications
+from app.services.mobile import demo_account, notifications
 from app.services.mobile.common import lang_suffix, offset_limit, paginate_rows
 from app.services.mobile.reservations import doctor_detail, doctor_works
 from app.utils.i18n import localized
@@ -376,6 +376,9 @@ async def _serialize_row(row: dict[str, Any]):
 
 
 async def list_requests(auth_user: dict[str, Any], *, page: int | None, page_size: int | None):
+    if demo_account.is_demo_auth(auth_user):
+        return demo_account.paginated_section("reservation_requests", page=page, page_size=page_size)
+
     offset, limit = offset_limit(page, page_size)
     count = await db.orm_scalar(
         select(func.count())
@@ -395,6 +398,12 @@ async def list_requests(auth_user: dict[str, Any], *, page: int | None, page_siz
 
 
 async def detail_request(auth_user: dict[str, Any], request_id: int):
+    if demo_account.is_demo_auth(auth_user):
+        for row in demo_account.section("reservation_requests", []):
+            if row.get("id") == request_id:
+                return row
+        raise HTTPException(status_code=404, detail="Reservation request was not found")
+
     row = await db.orm_one(
         select(reservation_requests_t).where(
             reservation_requests_t.c.id == request_id,
@@ -407,6 +416,22 @@ async def detail_request(auth_user: dict[str, Any], request_id: int):
 
 
 async def create_request(auth_user: dict[str, Any], request: sc.MobileReservationRequestCreate):
+    if demo_account.is_demo_auth(auth_user):
+        return {
+            "id": 999001,
+            "flutter_reservation_id": request.flutter_reservation_id,
+            "crm_request_id": None,
+            "doctor": {"id": request.doctor_id},
+            "reservation_work": {"work_id": request.reservation_work_id},
+            "doctor_name": None,
+            **_status_payload("draft", None),
+            "reservation_id": None,
+            "note": request.note,
+            "date": request.date.strftime("%d-%m-%Y"),
+            "time": request.time.strftime("%H:%M"),
+            "is_demo": True,
+        }
+
     slot_minutes = max(request.slot_minutes or 60, 15)
     doctor = await doctor_detail(request.doctor_id)
     work = await _work(request.reservation_work_id)
@@ -501,6 +526,17 @@ async def create_request(auth_user: dict[str, Any], request: sc.MobileReservatio
 
 
 async def cancel_request(auth_user: dict[str, Any], request_id: int):
+    if demo_account.is_demo_auth(auth_user):
+        row = await detail_request(auth_user, request_id)
+        row["status_code"] = "cancelled_by_patient"
+        row["status"] = _status_payload("cancelled_by_patient", row.get("reservation_id"))["status"]
+        row["status_label"] = row["status"]
+        row["ui_state"] = "cancelled"
+        row["can_cancel"] = False
+        row["can_confirm"] = False
+        row["is_demo"] = True
+        return row
+
     existing = await db.orm_one(
         select(reservation_requests_t).where(
             reservation_requests_t.c.id == request_id,
@@ -558,6 +594,21 @@ async def cancel_request(auth_user: dict[str, Any], request_id: int):
 
 
 async def confirm_request(auth_user: dict[str, Any], request_id: int):
+    if demo_account.is_demo_auth(auth_user):
+        row = await detail_request(auth_user, request_id)
+        if row.get("status_code") != "approved" or not row.get("reservation_id"):
+            raise HTTPException(
+                status_code=400,
+                detail="Only clinic-approved requests with reservation can be confirmed",
+            )
+        row["status_code"] = "approved_by_patient"
+        row["status"] = _status_payload("approved_by_patient", row.get("reservation_id"))["status"]
+        row["status_label"] = row["status"]
+        row["can_cancel"] = False
+        row["can_confirm"] = False
+        row["is_demo"] = True
+        return row
+
     existing = await db.orm_one(
         select(reservation_requests_t).where(
             reservation_requests_t.c.id == request_id,

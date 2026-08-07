@@ -7,6 +7,7 @@ from typing import Any
 from asyncpg.exceptions import UndefinedColumnError, UndefinedTableError
 from fastapi import HTTPException
 
+from app.services.mobile import demo_account
 from app.services.mobile.common import lang_suffix, offset_limit, paginate_rows
 from app.utils.di.db_ctx import CRM_DB
 from app.utils.i18n import localized
@@ -341,6 +342,20 @@ async def list_treatments(
     page: int | None,
     page_size: int | None,
 ):
+    if demo_account.is_demo_auth(auth_user):
+        rows = demo_account.section("treatments", [])
+        if status:
+            rows = [row for row in rows if row.get("status") == status]
+        if payment_status:
+            rows = [row for row in rows if row.get("payment_status") == payment_status]
+        if page:
+            safe_size = max(page_size or 10, 1)
+            start = (max(page, 1) - 1) * safe_size
+            page_rows = rows[start : start + safe_size]
+        else:
+            page_rows = rows
+        return paginate_rows(page_rows, count=len(rows), page=page, page_size=page_size)
+
     client_id = auth_user.get("crm_client_id")
     if not client_id:
         return paginate_rows([], count=0, page=page, page_size=page_size)
@@ -406,6 +421,16 @@ async def active_treatment_count(client_id: int | None) -> int:
 
 
 async def treatment_detail(auth_user: dict[str, Any], treatment_id: int):
+    if demo_account.is_demo_auth(auth_user):
+        details = demo_account.section("treatment_details", {})
+        detail = details.get(str(treatment_id))
+        if detail:
+            return detail
+        for row in demo_account.section("treatments", []):
+            if row.get("card_id") == treatment_id:
+                return row
+        raise HTTPException(status_code=404, detail="Treatment was not found")
+
     client_id = auth_user.get("crm_client_id")
     if not client_id:
         raise HTTPException(status_code=404, detail="Treatment was not found")

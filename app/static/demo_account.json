@@ -1,0 +1,434 @@
+{
+  "profile": {
+    "full_name": "Demo Patient",
+    "client_firstname": "Demo",
+    "client_lastname": "Patient",
+    "client_father_name": "Sadaf",
+    "client_birthdate": "1996-05-09",
+    "client_gender": "male",
+    "client_citizenship": "UZ",
+    "client_address": "Toshkent",
+    "client_telegram": "@sadaf_demo",
+    "client_type": "Basic",
+    "client_balance": 250000,
+    "cashback_balance": 80000,
+    "referral_code": "SADAF-DEMO",
+    "loyalty_tier": "bronze",
+    "loyalty_tier_label": "Bronze",
+    "total_spent_amount": 2450000,
+    "note": "Static mobile demo account",
+    "cashback_percent": 3
+  },
+  "dashboard": {
+    "counters": {
+      "active_reservations": 2,
+      "active_treatments": 2,
+      "unread_notifications": 1,
+      "referrals_count": 0,
+      "pending_reservation_requests": 1
+    },
+    "next_reservation": {
+      "reservation_id": 931059001,
+      "doctor_name": "Sarvar Turgunov",
+      "service_title": "Professional dental cleaning",
+      "date": "08-08-2026",
+      "start_time": "09:00",
+      "end_time": "10:00"
+    }
+  },
+  "loyalty": {
+    "referral_code": "SADAF-DEMO",
+    "referred_by": null,
+    "referred_by_name": null,
+    "referrals_count": 0,
+    "loyalty_tier": "bronze",
+    "loyalty_tier_label": "Bronze",
+    "cashback_balance": 80000,
+    "total_spent_amount": 2450000,
+    "cashback_percent": 3
+  },
+  "status": {
+    "full_name": "Demo Patient",
+    "loyalty_tier": "bronze",
+    "current_tier_label": "Bronze",
+    "cashback_balance": 80000,
+    "referral_code": "SADAF-DEMO",
+    "progress": {
+      "current_tier": "bronze",
+      "next_tier": "silver",
+      "next_tier_label": "Silver",
+      "goals": [
+        {
+          "code": "invite_friends",
+          "label": "Do'stlarni taklif qilish",
+          "current_value": 0,
+          "target_value": 3,
+          "unit": "ta",
+          "is_done": false
+        },
+        {
+          "code": "use_services",
+          "label": "Xizmatlardan foydalanish",
+          "current_value": 2450000,
+          "target_value": 5000000,
+          "unit": "sum",
+          "is_done": false
+        }
+      ]
+    },
+    "cashback_percent": 3
+  },
+  "reservations": [
+    {
+      "reservation_id": 931059001,
+      "reservation_doctor": {
+        "id": 931059001,
+        "user_firstname": "Sarvar",
+        "user_lastname": "Turgunov",
+        "user_image": "https://api.sadaf-clinic.uz/media/male-doctor.png",
+        "full_name": "Sarvar Turgunov"
+      },
+      "reservation_work": {
+        "work_id": 931059001,
+        "work_type": "Common",
+        "work_title": "Professional dental cleaning",
+        "work_basic_price": 200000,
+        "work_vip_price": 250000,
+        "work_discount_price": 200000,
+        "work_discount_percent": 0
+      },
+      "reservation_notes": "Demo accepted appointment",
+      "reservation_date": "08-08-2026",
+      "reservation_start_time": "09:00",
+      "reservation_end_time": "10:00",
+      "is_initial": true,
+      "cancelled": false,
+      "cancelled_by_patient": false,
+      "request_status": "Tasdiqlangan",
+      "request_status_code": "approved",
+      "reservation_request_id": 931059001,
+      "created_at": "2026-08-07T09:00:00+05:00"
+    },
+    {
+      "reservation_id": null,
+      "reservation_request_id": 931059002,
+      "crm_request_id": 931059002,
+      "request_status": "Kutilmoqda",
+      "request_status_code": "draft",
+      "source": "reservation_request",
+      "is_pending": true,
+      "reservation_doctor": {
+        "id": 931059002,
+        "user_firstname": "Dinara",
+        "user_lastname": "Abdurazakova",
+        "user_image": "https://api.sadaf-clinic.uz/media/female-doctor.png",
+        "full_name": "Dinara Abdurazakova"
+      },
+      "reservation_work": {
+        "work_id": 931059002,
+        "work_type": "Common",
+        "work_title": "Zoom-4 teeth whitening",
+        "work_basic_price": 900000
+      },
+      "reservation_notes": "Pending demo request",
+      "reservation_date": "13-08-2026",
+      "reservation_start_time": "16:00",
+      "reservation_end_time": "17:00",
+      "cancelled": false,
+      "cancelled_by_patient": false,
+      "created_at": "2026-08-07T09:20:00+05:00"
+    }
+  ],
+  "reservation_requests": [
+    {
+      "id": 931059001,
+      "flutter_reservation_id": "demo-accepted",
+      "crm_request_id": 931059001,
+      "doctor_name": "Sarvar Turgunov",
+      "status": "Tasdiqlangan",
+      "status_code": "approved",
+      "status_label": "Tasdiqlangan",
+      "ui_state": "success",
+      "next_action": "confirm_reservation",
+      "can_cancel": true,
+      "can_confirm": true,
+      "reservation_id": 931059001,
+      "note": "Accepted demo request",
+      "date": "08-08-2026",
+      "time": "09:00"
+    },
+    {
+      "id": 931059002,
+      "flutter_reservation_id": "demo-draft",
+      "crm_request_id": 931059002,
+      "doctor_name": "Dinara Abdurazakova",
+      "status": "Kutilmoqda",
+      "status_code": "draft",
+      "status_label": "Kutilmoqda",
+      "ui_state": "pending",
+      "next_action": "wait_for_clinic",
+      "can_cancel": true,
+      "can_confirm": false,
+      "reservation_id": null,
+      "note": "Pending demo request",
+      "date": "13-08-2026",
+      "time": "16:00"
+    }
+  ],
+  "treatments": [
+    {
+      "card_id": 931059001,
+      "card_number": "N 931059001",
+      "card_price": 650000,
+      "card_discount_price": 650000,
+      "card_discount_percent": 0,
+      "card_is_done": false,
+      "card_is_paid": false,
+      "card_finished_at": null,
+      "doctors": [{"id": 931059001, "full_name": "Sarvar Turgunov"}],
+      "doctor_name": "Sarvar Turgunov",
+      "paid_amount": 100000,
+      "remaining_amount": 550000,
+      "total_price": 650000,
+      "reservation_request_id": null,
+      "status": "accepted",
+      "status_label": "Qabul",
+      "payment_status": "partial",
+      "payment_status_label": "Qisman to'langan",
+      "reservation_summary": {
+        "reservation_id": 931059001,
+        "date": "08-08-2026",
+        "start_time": "09:00",
+        "end_time": "10:00",
+        "doctor_name": "Sarvar Turgunov",
+        "service_title": "Professional dental cleaning",
+        "is_initial": false
+      },
+      "reservation_datetime": "08-08-2026, 09:00 - 10:00",
+      "treatment_plan_summary": "Professional dental cleaning",
+      "treatment_plan_count": 1,
+      "card_created_at": "2026-08-01T10:00:00+05:00"
+    },
+    {
+      "card_id": 931059002,
+      "card_number": "N 931059002",
+      "card_price": 900000,
+      "card_discount_price": 900000,
+      "card_discount_percent": 0,
+      "card_is_done": false,
+      "card_is_paid": false,
+      "card_finished_at": null,
+      "doctors": [{"id": 931059002, "full_name": "Dinara Abdurazakova"}],
+      "doctor_name": "Dinara Abdurazakova",
+      "paid_amount": 250000,
+      "remaining_amount": 650000,
+      "total_price": 900000,
+      "reservation_request_id": null,
+      "status": "in_progress",
+      "status_label": "Jarayonda",
+      "payment_status": "partial",
+      "payment_status_label": "Qisman to'langan",
+      "reservation_summary": null,
+      "reservation_datetime": null,
+      "treatment_plan_summary": "Zoom-4 teeth whitening, Professional dental cleaning",
+      "treatment_plan_count": 2,
+      "card_created_at": "2026-07-27T10:00:00+05:00"
+    },
+    {
+      "card_id": 931059003,
+      "card_number": "N 931059003",
+      "card_price": 350000,
+      "card_discount_price": 350000,
+      "card_discount_percent": 0,
+      "card_is_done": true,
+      "card_is_paid": true,
+      "card_finished_at": "2026-07-20T11:00:00+05:00",
+      "doctors": [{"id": 931059001, "full_name": "Sarvar Turgunov"}],
+      "doctor_name": "Sarvar Turgunov",
+      "paid_amount": 350000,
+      "remaining_amount": 0,
+      "total_price": 350000,
+      "reservation_request_id": null,
+      "status": "completed",
+      "status_label": "O'tilgan",
+      "payment_status": "paid",
+      "payment_status_label": "To'langan",
+      "reservation_summary": null,
+      "reservation_datetime": null,
+      "treatment_plan_summary": "Filling and caries treatment",
+      "treatment_plan_count": 1,
+      "card_created_at": "2026-07-13T10:00:00+05:00"
+    }
+  ],
+  "treatment_details": {
+    "931059001": {
+      "card_id": 931059001,
+      "card_number": "N 931059001",
+      "status": "accepted",
+      "status_label": "Qabul",
+      "payment_status": "partial",
+      "payment_status_label": "Qisman to'langan",
+      "doctor_name": "Sarvar Turgunov",
+      "total_price": 650000,
+      "paid_amount": 100000,
+      "remaining_amount": 550000,
+      "client": {"client_id": 1},
+      "stage": [],
+      "credits": [],
+      "transactions": [
+        {
+          "transaction_id": "demo-payment-1",
+          "transaction_type": "pay_for_action",
+          "transaction_payment_type": "cash",
+          "transaction_sum": 100000,
+          "comment": "Demo prepayment",
+          "transaction_created_at": "2026-08-06T10:00:00+05:00"
+        }
+      ],
+      "treatment_plan": [
+        {
+          "action_id": 931059001,
+          "stage_id": 931059001,
+          "stage_index": 1,
+          "tooth_number": "11",
+          "service_title": "Professional dental cleaning",
+          "doctor_name": "Sarvar Turgunov",
+          "reservation_date": "08-08-2026",
+          "reservation_start_time": "09:00",
+          "reservation_end_time": "10:00",
+          "estimated_duration_days": 7,
+          "estimated_duration_label": "1 hafta",
+          "price": 200000,
+          "is_done": false,
+          "is_paid": false
+        }
+      ],
+      "card_title": "Davolanish kartasi N 931059001",
+      "contract_link": null
+    },
+    "931059002": {
+      "card_id": 931059002,
+      "card_number": "N 931059002",
+      "status": "in_progress",
+      "status_label": "Jarayonda",
+      "payment_status": "partial",
+      "payment_status_label": "Qisman to'langan",
+      "doctor_name": "Dinara Abdurazakova",
+      "total_price": 900000,
+      "paid_amount": 250000,
+      "remaining_amount": 650000,
+      "client": {"client_id": 1},
+      "stage": [],
+      "credits": [],
+      "transactions": [
+        {
+          "transaction_id": "demo-payment-2",
+          "transaction_type": "pay_for_action",
+          "transaction_payment_type": "terminal",
+          "transaction_sum": 250000,
+          "comment": "Demo partial payment",
+          "transaction_created_at": "2026-08-03T10:00:00+05:00"
+        }
+      ],
+      "treatment_plan": [
+        {
+          "action_id": 931059002,
+          "stage_id": 931059002,
+          "stage_index": 1,
+          "tooth_number": "21",
+          "service_title": "Zoom-4 teeth whitening",
+          "doctor_name": "Dinara Abdurazakova",
+          "reservation_date": "05-08-2026",
+          "reservation_start_time": "14:00",
+          "reservation_end_time": "15:00",
+          "estimated_duration_days": 14,
+          "estimated_duration_label": "2 hafta",
+          "price": 900000,
+          "is_done": true,
+          "is_paid": false
+        },
+        {
+          "action_id": 931059003,
+          "stage_id": 931059002,
+          "stage_index": 1,
+          "tooth_number": "21",
+          "service_title": "Professional dental cleaning",
+          "doctor_name": "Dinara Abdurazakova",
+          "reservation_date": null,
+          "reservation_start_time": null,
+          "reservation_end_time": null,
+          "estimated_duration_days": 7,
+          "estimated_duration_label": "1 hafta",
+          "price": 200000,
+          "is_done": false,
+          "is_paid": false
+        }
+      ],
+      "card_title": "Davolanish kartasi N 931059002",
+      "contract_link": null
+    },
+    "931059003": {
+      "card_id": 931059003,
+      "card_number": "N 931059003",
+      "status": "completed",
+      "status_label": "O'tilgan",
+      "payment_status": "paid",
+      "payment_status_label": "To'langan",
+      "doctor_name": "Sarvar Turgunov",
+      "total_price": 350000,
+      "paid_amount": 350000,
+      "remaining_amount": 0,
+      "client": {"client_id": 1},
+      "stage": [],
+      "credits": [],
+      "transactions": [
+        {
+          "transaction_id": "demo-payment-3",
+          "transaction_type": "pay_for_action",
+          "transaction_payment_type": "cash",
+          "transaction_sum": 350000,
+          "comment": "Demo full payment",
+          "transaction_created_at": "2026-07-20T11:00:00+05:00"
+        }
+      ],
+      "treatment_plan": [
+        {
+          "action_id": 931059004,
+          "stage_id": 931059003,
+          "stage_index": 1,
+          "tooth_number": "36",
+          "service_title": "Filling and caries treatment",
+          "doctor_name": "Sarvar Turgunov",
+          "reservation_date": "20-07-2026",
+          "reservation_start_time": "11:00",
+          "reservation_end_time": "12:00",
+          "estimated_duration_days": 3,
+          "estimated_duration_label": "3 kun",
+          "price": 350000,
+          "is_done": true,
+          "is_paid": true
+        }
+      ],
+      "card_title": "Davolanish kartasi N 931059003",
+      "contract_link": null
+    }
+  },
+  "notifications": [
+    {
+      "notification_id": 931059001,
+      "notification_type": "reservation",
+      "notification_message": "Demo qabul klinika tomonidan tasdiqlandi",
+      "notification_reservation": null,
+      "is_read": false,
+      "status_label": "Qabul",
+      "next_action": "open_reservation",
+      "payload": {
+        "reservation_id": 931059001,
+        "doctor_name": "Sarvar Turgunov",
+        "date": "08-08-2026",
+        "start_time": "09:00"
+      },
+      "created_at": "2026-08-07T09:30:00+05:00"
+    }
+  ]
+}

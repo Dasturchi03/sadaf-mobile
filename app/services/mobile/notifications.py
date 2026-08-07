@@ -13,7 +13,7 @@ from app.api.auth.models.users import Users
 from app.core.config import settings
 from app.models.mobile import Notification, NotificationDevice
 from app.services.common import db_common as db
-from app.services.mobile import push
+from app.services.mobile import demo_account, push
 from app.services.mobile.common import offset_limit, paginate_rows
 from app.utils.i18n import localized
 
@@ -159,6 +159,9 @@ async def test_send_notification(
 
 
 async def list_notifications(auth_user: dict[str, Any], *, page: int | None, page_size: int | None):
+    if demo_account.is_demo_auth(auth_user):
+        return demo_account.paginated_section("notifications", page=page, page_size=page_size)
+
     offset, limit = offset_limit(page, page_size)
     count = await db.orm_scalar(
         select(func.count())
@@ -178,6 +181,13 @@ async def list_notifications(auth_user: dict[str, Any], *, page: int | None, pag
 
 
 async def read_notification(auth_user: dict[str, Any], notification_id: int):
+    if demo_account.is_demo_auth(auth_user):
+        for row in demo_account.section("notifications", []):
+            if row.get("notification_id") == notification_id:
+                row["is_read"] = True
+                return row
+        raise HTTPException(status_code=404, detail="Notification was not found")
+
     row = await db.orm_one(
         update(notifications_t)
         .where(
@@ -193,6 +203,9 @@ async def read_notification(auth_user: dict[str, Any], notification_id: int):
 
 
 async def read_all(auth_user: dict[str, Any]):
+    if demo_account.is_demo_auth(auth_user):
+        return {"updated_count": len([row for row in demo_account.section("notifications", []) if not row.get("is_read")])}
+
     result = await db.orm_execute(
         update(notifications_t)
         .where(

@@ -103,8 +103,12 @@ class Settings(BaseSettings):
     HTTP_PROXY: Optional[str] = None
     HTTPS_PROXY: Optional[str] = None
     CRM_MEDIA_ROOT: Optional[str] = None
-    CRM_MEDIA_BASE_URL: Optional[str] = None
+    CRM_MEDIA_BASE_URL: Optional[str] = "https://api.sadaf-clinic.uz/media"
     FIREBASE_CREDENTIALS_FILE: Optional[str] = None
+    DEMO_ACCOUNT_ENABLED: bool = False
+    DEMO_ACCOUNT_PHONE: Optional[str] = None
+    DEMO_ACCOUNT_OTP: str = "111111"
+    DEMO_ACCOUNT_DATA_FILE: str = "app/static/demo_account.json"
 
     DEBUG: bool = True
     
